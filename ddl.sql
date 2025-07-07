@@ -14,7 +14,7 @@ CREATE TABLE users (
     created_at DATETIME COMMENT '생성일',
     modified_at DATETIME COMMENT '수정일',
     deleted_at DATETIME COMMENT '삭제일 (soft delete)'
-) COMMENT = '사용자 인증 Table';
+) COMMENT = '사용자 Table';
 
 -- 책(books) 테이블 생성
 CREATE TABLE books (
@@ -69,7 +69,7 @@ CREATE TABLE book_views (
 
 
 -- 책 댓글(book_comments) 테이블 생성
-CREATE TABLE book_views (
+CREATE TABLE book_comments (
     id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '책 댓글 ID (PK)',
     content VARCHAR(255) NOT NULL COMMENT '댓글 내용',
 
@@ -86,7 +86,7 @@ CREATE TABLE book_views (
 ) COMMENT = '책 댓글 Table';
 
 -- 로그(logs) 테이블 생성
-CREATE TABLE users (
+CREATE TABLE logs (
     id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '로그 ID (PK)',
     target_type VARCHAR(255) COMMENT '대상 타입',
     target_id BIGINT NOT NULL COMMENT '대상 id',
@@ -94,5 +94,10 @@ CREATE TABLE users (
     request_uri VARCHAR(255) COMMENT '요청 api 엔드포인트',
     message VARCHAR(255) COMMENT '메세지',
     is_success BOOLEAN COMMENT '성공 여부',
-    created_at DATETIME COMMENT '생성일'
+
+    user_id BIGINT NOT NULL COMMENT '유저 ID (FK)',
+
+    created_at DATETIME COMMENT '생성일',
+
+    FOREIGN KEY (user_id) REFERENCES users(id)
 ) COMMENT = '로그 Table';
