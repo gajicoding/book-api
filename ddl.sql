@@ -8,7 +8,7 @@ CREATE TABLE users (
     email VARCHAR(100) NOT NULL UNIQUE COMMENT '이메일',
     password VARCHAR(255) NOT NULL COMMENT '비밀번호',
     name VARCHAR(50) NOT NULL COMMENT '비밀번호',
-    birth DATETIME COMMENT '생일',
+    birth DATE COMMENT '생일',
     role VARCHAR(20) COMMENT '권한',
 
     created_at DATETIME COMMENT '생성일',
@@ -51,7 +51,7 @@ CREATE TABLE book_views (
 ) COMMENT = '책 조회수 Table';
 
 -- 책 평점(book_rating) 테이블 생성
-CREATE TABLE book_views (
+CREATE TABLE book_rating (
     id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '책 평점 ID (PK)',
     score INT NOT NULL COMMENT '평점',
 
