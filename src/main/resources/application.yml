@@ -13,6 +13,11 @@ spring:
     hibernate:
       ddl-auto: update
 
+  mvc:
+    servlet:
+      path: /api
+
+
 server:
   error:
     include-message: always
