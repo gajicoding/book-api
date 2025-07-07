@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@Table(name = "logs")
 public class Log {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,4 +37,7 @@ public class Log {
     // user와 관계 추후 설정
     // @ManyToOne(fetch = FetchType.LAZY)
     // private User user;
+
+
+    // 생성자 추후 추가
 }
