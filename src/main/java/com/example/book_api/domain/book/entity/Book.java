@@ -1,6 +1,6 @@
 package com.example.book_api.domain.book.entity;
 
-import com.example.book_api.domain.book.categoryenum.CategoryEnum;
+import com.example.book_api.domain.book.enums.CategoryEnum;
 import com.example.book_api.domain.user.entity.User;
 import com.example.book_api.global.entity.BaseEntity;
 import jakarta.persistence.*;

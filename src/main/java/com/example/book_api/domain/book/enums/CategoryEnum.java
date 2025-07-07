@@ -1,4 +1,4 @@
-package com.example.book_api.domain.book.categoryenum;
+package com.example.book_api.domain.book.enums;
 
 
 public enum CategoryEnum {
