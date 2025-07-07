@@ -1,6 +1,7 @@
 package com.example.book_api.domain.user.entity;
 
 import com.example.book_api.domain.user.enums.Role;
+import com.example.book_api.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import java.sql.Date;
 @Getter
 @NoArgsConstructor
 @Table(name = "users")
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
