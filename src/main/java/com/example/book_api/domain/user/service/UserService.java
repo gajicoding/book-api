@@ -22,4 +22,9 @@ public class UserService {
         }
     }
 
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new UserException("가입되지 않은 이메일입니다."));
+    }
+
 }

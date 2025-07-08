@@ -1,9 +1,6 @@
 package com.example.book_api.domain.auth.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -26,7 +23,7 @@ public class SignUpRequestDto {
     @NotBlank(message = "null/공백은 입력 불가합니다.")
     private String name;
 
-    @NotBlank(message = "null/공백은 입력 불가합니다.")
+    @NotNull
     private LocalDate birth;
 
 }
