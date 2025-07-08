@@ -5,6 +5,7 @@ import com.example.book_api.domain.book.dto.BookResponseDto;
 import com.example.book_api.domain.book.entity.Book;
 import com.example.book_api.domain.book.enums.AgeGroup;
 import com.example.book_api.domain.book.enums.CategoryEnum;
+import com.example.book_api.domain.book.exception.InvalidSearchConditionException;
 import com.example.book_api.domain.book.exception.NotFoundException;
 import com.example.book_api.domain.book.repository.BookRepository;
 import com.example.book_api.domain.book.repository.QBookRepository;
@@ -47,7 +48,9 @@ public class BookService {
 
     // 책 카테고리별 top 10
     public List<BookResponseDto> getTopBookByCategory(String category) {
-        CategoryEnum categoryEnum = CategoryEnum.of(category).orElseThrow(RuntimeException::new);
+        CategoryEnum categoryEnum = CategoryEnum.of(category).orElseThrow(()
+                -> new InvalidSearchConditionException(HttpStatus.BAD_REQUEST, "검색 조건이 올바르지 않습니다: " + category)
+        );
 
         return qBookRepository.findTop10BooksByCategory(categoryEnum)
                 .stream()
@@ -57,7 +60,9 @@ public class BookService {
 
     // 책 나이대 별 top 10
     public List<BookResponseDto> getTopBookByUserAge(String ageGroup) {
-        AgeGroup ageGroupEnum = AgeGroup.of(ageGroup).orElseThrow(RuntimeException::new);
+        AgeGroup ageGroupEnum = AgeGroup.of(ageGroup).orElseThrow(()
+                -> new InvalidSearchConditionException(HttpStatus.BAD_REQUEST, "검색 조건이 올바르지 않습니다: " + ageGroup)
+        );
 
         return qBookRepository.findTop10BooksByAgeGroup(ageGroupEnum)
                 .stream()
