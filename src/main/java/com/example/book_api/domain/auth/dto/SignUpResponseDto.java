@@ -11,7 +11,6 @@ public class SignUpResponseDto {
 
     private final String email;
     private final String name;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private final LocalDate birth;
 
 }

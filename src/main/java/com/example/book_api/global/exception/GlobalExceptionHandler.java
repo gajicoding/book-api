@@ -1,6 +1,6 @@
 package com.example.book_api.global.exception;
 
-import com.example.book_api.domain.auth.exception.InvalidRequestException;
+import com.example.book_api.domain.user.exception.UserException;
 import com.example.book_api.global.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +18,8 @@ public class GlobalExceptionHandler {
     }
 
     //
-    @ExceptionHandler(InvalidRequestException.class)
-    public ResponseEntity<ApiResponse<Void>> invalidRequestException(InvalidRequestException ex) {
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<ApiResponse<Void>> UserException(UserException ex) {
         return ApiResponse.error(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 }

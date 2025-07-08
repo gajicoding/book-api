@@ -2,7 +2,6 @@ package com.example.book_api.domain.auth.service;
 
 import com.example.book_api.domain.auth.dto.SignUpRequestDto;
 import com.example.book_api.domain.auth.dto.SignUpResponseDto;
-import com.example.book_api.domain.auth.exception.InvalidRequestException;
 import com.example.book_api.domain.user.entity.User;
 import com.example.book_api.domain.user.service.UserService;
 import com.example.book_api.global.config.PasswordEncoder;
@@ -19,9 +18,7 @@ public class AuthService {
 
     @Transactional
     public SignUpResponseDto signUp(SignUpRequestDto signUpRequestDto) {
-        if (userService.existsByEmail(signUpRequestDto.getEmail())) {
-            throw new InvalidRequestException("이미 존재하는 이메일입니다.");
-        }
+        userService.existsByEmail(signUpRequestDto.getEmail());
 
         String encodedPassword = passwordEncoder.encode(signUpRequestDto.getPassword());
 
@@ -34,7 +31,7 @@ public class AuthService {
 
         User savedUser = userService.saveUser(newUser);
 
-        return new SignUpResponseDto(signUpRequestDto.getEmail(), signUpRequestDto.getName(), signUpRequestDto.getBirth());
+        return new SignUpResponseDto(savedUser.getEmail(), savedUser.getName(), savedUser.getBirth());
     }
 
 }
