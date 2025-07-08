@@ -10,7 +10,6 @@ import java.time.Year;
 @NoArgsConstructor
 public class BookUpdateRequestDto {
 
-
     private String title;
     private String author;
     private String publisher;

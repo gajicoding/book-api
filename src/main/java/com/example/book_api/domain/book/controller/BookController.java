@@ -5,6 +5,7 @@ import com.example.book_api.domain.book.dto.BookRegistResquestDto;
 import com.example.book_api.domain.book.dto.BookUpdateRequestDto;
 import com.example.book_api.domain.book.service.BookService;
 import com.example.book_api.global.dto.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RestController
@@ -24,7 +24,7 @@ public class BookController {
 
     @PostMapping("/books")
     public ResponseEntity<ApiResponse<BookResponseDto>> regist(
-            @RequestBody BookRegistResquestDto resquestDto) {
+            @RequestBody @Valid BookRegistResquestDto resquestDto) {
 
         return ApiResponse.success(HttpStatus.OK, "책이 등록되었습니다.", bookService.regist(resquestDto));
     }
