@@ -5,7 +5,8 @@ import com.example.book_api.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.util.Date;
+import java.time.LocalDate;
+
 
 @Entity
 @Getter
@@ -28,13 +29,13 @@ public class User extends BaseEntity {
     private String name;
 
     @Column(name = "birth", nullable = false)
-    private Date birth;
+    private LocalDate birth;
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
-    public User(String email, String password, String name, Date birth) {
+    public User(String email, String password, String name, LocalDate birth) {
         this.email = email;
         this.password = password;
         this.name = name;
