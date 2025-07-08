@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.Year;
 
 @Entity
 @Getter
@@ -26,11 +26,19 @@ public class Book extends BaseEntity {
     private String title;
     private String author;
     private String publisher;
-    private LocalDate publicationYear;
+    private Year publicationYear;
     private Long isbn;
 
     @Enumerated(EnumType.STRING)
     private CategoryEnum category;
 
-
+    public Book(User user, String title, String author, String publisher, Year publicationYear, Long isbn, CategoryEnum category) {
+        this.user = user;
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
+        this.publicationYear = publicationYear;
+        this.isbn = isbn;
+        this.category = category;
+    }
 }
