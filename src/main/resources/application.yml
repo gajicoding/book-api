@@ -4,8 +4,8 @@ spring:
 
   datasource:
     url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: root
+    password: 111111
 
   jpa:
     show-sql: true

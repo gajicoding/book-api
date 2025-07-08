@@ -1,9 +1,10 @@
 package com.example.book_api.domain.rating.entity;
 
+import com.example.book_api.domain.book.entity.Book;
+import com.example.book_api.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.awt.print.Book;
 import java.time.LocalDateTime;
 
 @Entity
