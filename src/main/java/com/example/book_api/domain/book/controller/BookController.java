@@ -2,6 +2,7 @@ package com.example.book_api.domain.book.controller;
 
 import com.example.book_api.domain.book.dto.BookResponseDto;
 import com.example.book_api.domain.book.dto.BookRegistResquestDto;
+import com.example.book_api.domain.book.dto.BookUpdateRequestDto;
 import com.example.book_api.domain.book.service.BookService;
 import com.example.book_api.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +23,14 @@ public class BookController {
     public ResponseEntity<ApiResponse<BookResponseDto>> regist(
             @RequestBody BookRegistResquestDto resquestDto) {
 
-        return ApiResponse.success(HttpStatus.OK,"책이 등록되었습니다.", bookService.regist(resquestDto));
+        return ApiResponse.success(HttpStatus.OK, "책이 등록되었습니다.", bookService.regist(resquestDto));
     }
 
     // 단건 조회
     @GetMapping("/books/{id}")
     public ResponseEntity<ApiResponse<BookResponseDto>> find(
             @PathVariable Long id) {
-        return ApiResponse.success(HttpStatus.OK,"성공적으로 조회되었습니다.", bookService.find(id));
+        return ApiResponse.success(HttpStatus.OK, "성공적으로 조회되었습니다.", bookService.find(id));
     }
 
 
@@ -38,5 +39,13 @@ public class BookController {
         Page<BookResponseDto> page = bookService.findAll(pageable);
         return ApiResponse.success(
                 HttpStatus.OK, "성공적으로 조회되었습니다.", page);
+    }
+
+    @PatchMapping("/books/{id}")
+    public ResponseEntity<ApiResponse<BookResponseDto>> update(
+            @PathVariable Long id,
+            @RequestBody BookUpdateRequestDto requestDto
+            ) {
+        return ApiResponse.success(HttpStatus.OK, "책이 수정되었습니다.", bookService.update(id, requestDto));
     }
 }

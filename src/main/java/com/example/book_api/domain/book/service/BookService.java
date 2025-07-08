@@ -2,6 +2,7 @@ package com.example.book_api.domain.book.service;
 
 import com.example.book_api.domain.book.dto.BookResponseDto;
 import com.example.book_api.domain.book.dto.BookRegistResquestDto;
+import com.example.book_api.domain.book.dto.BookUpdateRequestDto;
 import com.example.book_api.domain.book.entity.Book;
 import com.example.book_api.domain.book.exception.NotFoundException;
 import com.example.book_api.domain.book.repository.BookRepository;
@@ -43,5 +44,14 @@ public class BookService {
                 book.getIsbn(),
                 book.getCategory()
                 ));
+    }
+
+    public BookResponseDto update(Long id, BookUpdateRequestDto requestDto) {
+        Book findBook = bookRepository.findById(id)
+                .orElseThrow(()-> new NotFoundException(HttpStatus.NOT_FOUND,
+                        "해당 id로 책을 찾을 수 없습니다. 다른 id를 입력해주세요!"));
+
+       findBook.updatePost(requestDto);
+       return new BookResponseDto(findBook);
     }
 }
