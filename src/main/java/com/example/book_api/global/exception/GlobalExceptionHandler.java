@@ -13,7 +13,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGenericException() {
         String message = "서버 내부 오류가 발생했습니다.";
-        ApiResponse<Void> response = ApiResponse.failure(message);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        return ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, message);
     }
 }
