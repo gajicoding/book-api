@@ -32,4 +32,16 @@ public class BookService {
     }
 
 
+    public Page<BookResponseDto> findAll(Pageable pageable) {
+        Page<Book> books = bookRepository.findAll(pageable);
+        return books.map(book -> new BookResponseDto(
+                book.getId(),
+                book.getTitle(),
+                book.getAuthor(),
+                book.getPublisher(),
+                book.getPublicationYear(),
+                book.getIsbn(),
+                book.getCategory()
+                ));
+    }
 }

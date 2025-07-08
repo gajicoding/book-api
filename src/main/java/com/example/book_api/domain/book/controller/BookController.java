@@ -33,4 +33,10 @@ public class BookController {
     }
 
 
+    @GetMapping("/books")
+    public ResponseEntity<ApiResponse<Page<BookResponseDto>>> findAll(Pageable pageable) {
+        Page<BookResponseDto> page = bookService.findAll(pageable);
+        return ApiResponse.success(
+                HttpStatus.OK, "성공적으로 조회되었습니다.", page);
+    }
 }
