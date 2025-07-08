@@ -1,6 +1,12 @@
 package com.example.book_api.domain.book.enums;
 
 
+import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.Optional;
+
+@Getter
 public enum CategoryEnum {
     GENERAL("총류"),
     PHILOSOPHY("철학"),
@@ -17,5 +23,14 @@ public enum CategoryEnum {
 
     CategoryEnum(String label) {
         this.label = label;
+    }
+
+    public static Optional<CategoryEnum> of(String input) {
+        if (input == null || input.isBlank()) {
+            return Optional.empty();
+        }
+        return Arrays.stream(values())
+                .filter(e -> e.name().equals(input))
+                .findFirst();
     }
 }
