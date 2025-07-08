@@ -63,7 +63,7 @@ public class BookService {
 
 
     // 중복되는거 메서드로 뺌 (id로 책찾는거)
-    private Book getBookById(Long id) {
+    public Book getBookById(Long id) {
         return bookRepository.findById(id)
                 .orElseThrow(()-> new NotFoundException(HttpStatus.NOT_FOUND,
                         "해당 id로 책을 찾을 수 없습니다. 다른 id를 입력해주세요!"));
