@@ -38,4 +38,14 @@ public class BookController {
         );
     }
 
+    // 책 나이대 별 top 10
+    @GetMapping("/books/top/ages")
+    public ResponseEntity<ApiResponse<List<BookResponseDto>>> getTopBookByUserAge(
+            @RequestParam(defaultValue = "TEENS_EARLY") String ageGroup
+    ) {
+        return ApiResponse.success(
+                HttpStatus.OK, "책 나이대 별 top 10 조회가 완료되었습니다.", bookService.getTopBookByUserAge(ageGroup)
+        );
+    }
+
 }

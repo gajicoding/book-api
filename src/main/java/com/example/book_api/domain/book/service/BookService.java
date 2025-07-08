@@ -1,6 +1,7 @@
 package com.example.book_api.domain.book.service;
 
 import com.example.book_api.domain.book.dto.BookResponseDto;
+import com.example.book_api.domain.book.enums.AgeGroup;
 import com.example.book_api.domain.book.enums.CategoryEnum;
 import com.example.book_api.domain.book.repository.BookRepository;
 import com.example.book_api.domain.book.repository.QBookRepository;
@@ -34,5 +35,14 @@ public class BookService {
                 .toList();
     }
 
+    // 책 나이대 별 top 10
+    public List<BookResponseDto> getTopBookByUserAge(String ageGroup) {
+        AgeGroup ageGroupEnum = AgeGroup.of(ageGroup).orElseThrow(RuntimeException::new);
+
+        return qBookRepository.findTop10BooksByAgeGroup(ageGroupEnum)
+                .stream()
+                .map(BookResponseDto::new)
+                .toList();
+    }
 
 }
