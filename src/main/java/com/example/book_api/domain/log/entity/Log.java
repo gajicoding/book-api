@@ -29,7 +29,7 @@ public class Log {
 
     private String message;
 
-    private boolean isSuccess;
+    private int statusCode;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
