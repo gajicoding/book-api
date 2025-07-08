@@ -32,13 +32,17 @@ public class Book extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private CategoryEnum category;
 
-    public Book(User user, String title, String author, String publisher, Year publicationYear, Long isbn, CategoryEnum category) {
-        this.user = user;
+    public Book(String title, String author, String publisher, Year publicationYear, Long isbn, CategoryEnum category) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.publicationYear = publicationYear;
         this.isbn = isbn;
         this.category = category;
+    }
+
+
+    public void updateUser(User user) {
+        this.user = user;
     }
 }
