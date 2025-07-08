@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/v1")
 @RequiredArgsConstructor
@@ -45,7 +48,14 @@ public class BookController {
     public ResponseEntity<ApiResponse<BookResponseDto>> update(
             @PathVariable Long id,
             @RequestBody BookUpdateRequestDto requestDto
-            ) {
+    ) {
         return ApiResponse.success(HttpStatus.OK, "책이 수정되었습니다.", bookService.update(id, requestDto));
+    }
+
+    @DeleteMapping("/books/{id}")
+    public ResponseEntity<ApiResponse<LocalDateTime>> delete(
+            @PathVariable Long id
+    ) {
+        return ApiResponse.success(HttpStatus.OK,"책이 삭제 되었습니다.", bookService.softDel(id));
     }
 }

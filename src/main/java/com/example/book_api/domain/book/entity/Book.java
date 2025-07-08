@@ -7,8 +7,10 @@ import com.example.book_api.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Year;
 
 @Entity
@@ -20,7 +22,6 @@ public class Book extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -34,6 +35,7 @@ public class Book extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private CategoryEnum category;
+
 
     public Book(String title, String author, String publisher, Year publicationYear, Long isbn, CategoryEnum category) {
         this.title = title;
@@ -57,4 +59,6 @@ public class Book extends BaseEntity {
         if (requestDto.getIsbn() != null) this.isbn = requestDto.getIsbn();
         if (requestDto.getCategory() != null) this.category = requestDto.getCategory();
     }
+
+
 }

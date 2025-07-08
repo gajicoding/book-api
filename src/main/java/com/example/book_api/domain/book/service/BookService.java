@@ -12,6 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class BookService {
@@ -26,9 +29,7 @@ public class BookService {
 
     // 단건 조회
     public BookResponseDto find(Long id) {
-        Book byId = bookRepository.findById(id)
-                .orElseThrow(()-> new NotFoundException(HttpStatus.NOT_FOUND,
-                        "해당 id로 책을 찾을 수 없습니다. 다른 id를 입력해주세요!"));
+        Book byId = getBook(id);
         return new BookResponseDto(byId);
     }
 
@@ -47,11 +48,26 @@ public class BookService {
     }
 
     public BookResponseDto update(Long id, BookUpdateRequestDto requestDto) {
+        Book findBook = getBook(id);
+
+        findBook.updatePost(requestDto);
+       return new BookResponseDto(findBook);
+    }
+
+
+
+    public LocalDateTime softDel(Long id) {
+        Book findBook = getBook(id);
+        findBook.delete();
+        return new Book().getDeletedAt();
+    }
+
+
+    // 중복되는거 메서드로 뺌 (id로 책찾는거)
+    private Book getBook(Long id) {
         Book findBook = bookRepository.findById(id)
                 .orElseThrow(()-> new NotFoundException(HttpStatus.NOT_FOUND,
                         "해당 id로 책을 찾을 수 없습니다. 다른 id를 입력해주세요!"));
-
-       findBook.updatePost(requestDto);
-       return new BookResponseDto(findBook);
+        return findBook;
     }
 }
