@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 
 import static com.example.book_api.domain.book.entity.QBook.book;
@@ -79,6 +80,7 @@ public class QBookRepository {
         builder.or(book.title.containsIgnoreCase(keyword));
         builder.or(book.author.containsIgnoreCase(keyword));
         builder.or(book.publisher.containsIgnoreCase(keyword));
+        builder.or(book.publicationYear.eq(Year.parse(keyword)));
         builder.or(book.category.stringValue().containsIgnoreCase(keyword));
 
         JPAQuery<Book> query = queryFactory.selectFrom(book).where(builder);
