@@ -5,6 +5,7 @@ import com.example.book_api.domain.book.dto.BookRegistResquestDto;
 import com.example.book_api.domain.book.dto.BookUpdateRequestDto;
 import com.example.book_api.domain.book.service.BookService;
 import com.example.book_api.global.dto.ApiResponse;
+import com.example.book_api.global.dto.PagedResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,12 +40,15 @@ public class BookController {
     }
 
     // 책 전체 조회
-    // TODO: page, size 값  받아서 처리하기
+    // TODO: page, size 값  받아서 처리하기 , 제목 or 저자 검색 추가
     @GetMapping("/books")
-    public ResponseEntity<ApiResponse<Page<BookResponseDto>>> findAll(Pageable pageable) {
-        Page<BookResponseDto> page = bookService.findAll(pageable);
+    public ResponseEntity<ApiResponse<PagedResponse<BookResponseDto>>> findAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword) {
+        Page<BookResponseDto> pageAll = bookService.findAll(page, size, keyword);
         return ApiResponse.success(
-                HttpStatus.OK, "성공적으로 조회되었습니다.", page);
+                HttpStatus.OK, "성공적으로 조회되었습니다.", PagedResponse.toPagedResponse(pageAll));
     }
 
     // TODO: Cursor 방식 페이징 API 추가

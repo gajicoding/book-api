@@ -12,7 +12,9 @@ import com.example.book_api.domain.book.repository.BookRepository;
 import com.example.book_api.domain.book.repository.QBookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -40,9 +42,16 @@ public class BookService {
         return new BookResponseDto(byId);
     }
 
-    // 책 전체 조회
-    public Page<BookResponseDto> findAll(Pageable pageable) {
-        Page<Book> books = bookRepository.findAll(pageable);
+    // 책 전체 조회 page, size 방식
+    public Page<BookResponseDto> findAll(int page, int size, String keyword) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
+        Page<Book> books;
+        if (keyword == null || keyword.trim().isEmpty()) {
+            books = bookRepository.findAll(pageable);
+        } else {
+            books = qBookRepository.searchAllFields(keyword, pageable);
+        }
+
         return books.map(book -> new BookResponseDto(
                 book.getId(),
                 book.getTitle(),
@@ -51,7 +60,7 @@ public class BookService {
                 book.getPublicationYear(),
                 book.getIsbn(),
                 book.getCategory()
-                ));
+        ));
     }
 
     // 책 수정
@@ -59,7 +68,7 @@ public class BookService {
         Book findBook = getBookById(id);
 
         findBook.updatePost(requestDto);
-       return new BookResponseDto(findBook);
+        return new BookResponseDto(findBook);
     }
 
     // 책 삭제
@@ -108,7 +117,7 @@ public class BookService {
     // 중복되는거 메서드로 뺌 (id로 책찾는거)
     public Book getBookById(Long id) {
         return bookRepository.findById(id)
-                .orElseThrow(()-> new NotFoundException(HttpStatus.NOT_FOUND,
+                .orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND,
                         "해당 id로 책을 찾을 수 없습니다. 다른 id를 입력해주세요!"));
     }
 

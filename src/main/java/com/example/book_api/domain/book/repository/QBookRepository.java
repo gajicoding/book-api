@@ -1,10 +1,21 @@
 package com.example.book_api.domain.book.repository;
 
 import com.example.book_api.domain.book.entity.Book;
+import com.example.book_api.domain.book.entity.QBook;
 import com.example.book_api.domain.book.enums.AgeGroup;
 import com.example.book_api.domain.book.enums.CategoryEnum;
+import com.example.book_api.domain.book.exception.InvalidSearchConditionException;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.Wildcard;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -60,5 +71,33 @@ public class QBookRepository {
                 .orderBy(bookView.count().desc())
                 .limit(10)
                 .fetch();
+    }
+
+
+    public Page<Book> searchAllFields(String keyword, Pageable pageable) {
+        QBook book = QBook.book;
+        BooleanBuilder builder = new BooleanBuilder();
+
+
+        builder.or(book.title.containsIgnoreCase(keyword));
+        builder.or(book.author.containsIgnoreCase(keyword));
+        builder.or(book.publisher.containsIgnoreCase(keyword));
+        builder.or(book.category.stringValue().containsIgnoreCase(keyword));
+
+        JPAQuery<Book> query = queryFactory.selectFrom(book).where(builder);
+
+        long total = queryFactory.select(Wildcard.count).from(book).where(builder).fetchOne();
+
+
+        List<Book> content = query
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(book.id.desc()).fetch();
+
+        if (content.isEmpty()) {
+            throw new InvalidSearchConditionException(HttpStatus.NOT_FOUND,"키워드에 해당하는 책이 없습니다. 다시 입력해주세요.");
+        }
+
+        return new PageImpl<>(content, pageable, total);
     }
 }
