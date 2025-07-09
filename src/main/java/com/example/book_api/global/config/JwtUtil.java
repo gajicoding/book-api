@@ -21,7 +21,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private static final String BEARER_PRIFIX = "Bearer ";
+    private static final String BEARER_PREFIX = "Bearer ";
     private static final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -37,7 +37,7 @@ public class JwtUtil {
     public String createToken(User user) {
         Date date = new Date();
 
-        String token = BEARER_PRIFIX + Jwts.builder()
+        String token = BEARER_PREFIX + Jwts.builder()
                 .setSubject(String.valueOf(user.getId()))
                 .claim("email" , user.getEmail())
                 .claim("name", user.getName())
@@ -51,7 +51,7 @@ public class JwtUtil {
     }
 
     public String substringToken(String tokenVelue) {
-        if (StringUtils.hasText(tokenVelue) && tokenVelue.startsWith(BEARER_PRIFIX)) {
+        if (StringUtils.hasText(tokenVelue) && tokenVelue.startsWith(BEARER_PREFIX)) {
             return tokenVelue.substring(7);
         }
         throw new NotFoundException("토큰을 찾을 수 없습니다.");

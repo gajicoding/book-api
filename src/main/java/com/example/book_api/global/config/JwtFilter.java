@@ -32,7 +32,7 @@ public class JwtFilter implements Filter {
         String method = httpServletRequest.getMethod();
 
         // "/auth" 로 시작하는 url 제외
-        if (url.startsWith("/auth")) {
+        if (url.startsWith("/api/v1/auth")) {
             chain.doFilter(request, response);
             return;
         }
@@ -42,6 +42,7 @@ public class JwtFilter implements Filter {
         // 해더에서 토근 입력하지 않은 경우
         if (bearerJwt == null) {
             httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "토큰이 필요합니다.");
+            return;
         }
 
         String jwt = jwtUtil.substringToken(bearerJwt);
@@ -50,6 +51,7 @@ public class JwtFilter implements Filter {
             Claims claims = jwtUtil.extractClaims(jwt);
             if (claims == null) {
                 httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "잘못된 토큰입니다.");
+                return;
             }
 
             Role role = Role.valueOf(claims.get("role", String.class));
@@ -66,7 +68,7 @@ public class JwtFilter implements Filter {
                     (pathMatcher.match("/api/v1/books/{id}", url) && "DELETE".equalsIgnoreCase(method)) ||
                     (pathMatcher.match("/api/v1/users/{id}", url) && "PATCH".equalsIgnoreCase(method))
             ) {
-                if (Role.ADMIN.equals(role)) {
+                if (!Role.ADMIN.equals(role)) {
                     httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "관리자 권한이 없습니다.");
                     return;
                 }
