@@ -1,6 +1,5 @@
 package com.example.book_api.domain.book.dto;
 
-
 import com.example.book_api.domain.book.entity.Book;
 import com.example.book_api.domain.book.enums.CategoryEnum;
 import lombok.AllArgsConstructor;
@@ -19,7 +18,6 @@ public class BookResponseDto {
     private final Year publicationYear;
     private final Long isbn;
     private final CategoryEnum category;
-
 
     public BookResponseDto(Book book) {
         this.id = book.getId();
