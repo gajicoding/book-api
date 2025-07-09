@@ -1,10 +1,15 @@
 package com.example.book_api.domain.log.entity;
 
+import com.example.book_api.domain.log.enums.ActivityType;
 import com.example.book_api.domain.log.enums.RequestMethod;
 import com.example.book_api.domain.log.enums.TargetType;
 import com.example.book_api.domain.user.entity.User;
+import com.example.book_api.domain.user.service.UserService;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -12,6 +17,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Table(name = "logs")
+@NoArgsConstructor
 public class Log {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +33,11 @@ public class Log {
 
     private String requestUri;
 
-    private String message;
+    private ActivityType activityType;
 
     private int statusCode;
+
+    private String message;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -39,6 +47,25 @@ public class Log {
     @JoinColumn(name = "user_id")
     private User user;
 
-
-    // 생성자 추후 추가
+    @Builder
+    public Log(
+            User user,
+            TargetType targetType,
+            Long targetId,
+            RequestMethod requestMethod,
+            String requestUri,
+            ActivityType activityType,
+            int statusCode,
+            String message
+    ) {
+        UserService userService;
+        this.user = user;
+        this.targetType = targetType;
+        this.targetId = targetId;
+        this.requestMethod = requestMethod;
+        this.requestUri = requestUri;
+        this.activityType = activityType;
+        this.statusCode = statusCode;
+        this.message = message;
+    }
 }
