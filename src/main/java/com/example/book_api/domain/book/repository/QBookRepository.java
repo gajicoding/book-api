@@ -97,4 +97,20 @@ public class QBookRepository {
 
         return new PageImpl<>(content, pageable, total);
     }
+
+    public List<Book> findAllByCursor(Long cursor, Long size) {
+        QBook book = QBook.book;
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (cursor != null) {
+            builder.and(book.id.lt(cursor)); // cursor 보다 작은 id만
+        }
+
+        return queryFactory
+                .selectFrom(book)
+                .where(builder)
+                .orderBy(book.id.desc()) // 내림차순
+                .limit(size)
+                .fetch();
+    }
 }

@@ -63,6 +63,11 @@ public class BookService {
         ));
     }
 
+    // 책 cursor 방식으로 조회
+    public List<BookResponseDto> findAllByCursor(Long cursor, Long size) {
+        return qBookRepository.findAllByCursor(cursor, size).stream().map(BookResponseDto::new).toList();
+    }
+
     // 책 수정
     public BookResponseDto update(Long id, BookUpdateRequestDto requestDto) {
         Book findBook = getBookById(id);
@@ -120,5 +125,6 @@ public class BookService {
                 .orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND,
                         "해당 id로 책을 찾을 수 없습니다. 다른 id를 입력해주세요!"));
     }
+
 
 }
