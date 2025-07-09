@@ -40,4 +40,14 @@ public class UserController {
         ChangePasswordResponseDto changePasswordResponseDto = userService.changePassword(authUser, changePasswordRequestDto);
         return ApiResponse.success(HttpStatus.OK, "비밀번호 변경이 완료되었습니다.", changePasswordResponseDto);
     }
+
+    @DeleteMapping("/users/withdraw")
+    public ResponseEntity<ApiResponse<Object>> deleteUser(
+            @Auth AuthUser authUser,
+            @RequestBody DeleteRequestDto deleteRequestDto
+    ) {
+        userService.deleteUser(authUser,deleteRequestDto);
+        return ApiResponse.success(HttpStatus.OK, "회원 탈퇴가 완료되었습니다.", null);
+    }
+
 }

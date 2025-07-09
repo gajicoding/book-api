@@ -58,6 +58,19 @@ public class UserService {
         return new ChangePasswordResponseDto(user.getEmail(), user.getName(), user.getBirth(), user.getRole());
     }
 
+    @Transactional
+    public void deleteUser(AuthUser authUser, DeleteRequestDto deleteRequestDto) {
+        User user = userRepository.findById(authUser.getId()).orElseThrow(
+                () -> new NotFoundUserException("사용자를 찾을 수 없습니다.")
+        );
+
+        if (!passwordEncoder.matches(deleteRequestDto.getPassword(), user.getPassword())) {
+            throw new UserException("잘못된 비밀번호입니다.");
+        }
+
+        user.delete();
+    }
+
 
     public User saveUser(User user) {
         return userRepository.save(user);
