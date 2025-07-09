@@ -1,13 +1,13 @@
 package com.example.book_api.domain.user.service;
 
-import com.example.book_api.domain.user.dto.ChangeUserRoleRequestDto;
-import com.example.book_api.domain.user.dto.ChangeUserRoleResponseDto;
-import com.example.book_api.domain.user.dto.FindUserResponseDto;
+import com.example.book_api.domain.auth.dto.AuthUser;
+import com.example.book_api.domain.user.dto.*;
 import com.example.book_api.domain.user.entity.User;
 import com.example.book_api.domain.user.enums.Role;
 import com.example.book_api.domain.user.exception.NotFoundUserException;
 import com.example.book_api.domain.user.exception.UserException;
 import com.example.book_api.domain.user.repository.UserRepository;
+import com.example.book_api.global.config.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +19,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public FindUserResponseDto findUser(Long id) {
@@ -35,6 +36,26 @@ public class UserService {
         );
         user.updateRole(Role.of(changeUserRoleRequestDto.getRole()));
         return new ChangeUserRoleResponseDto(user.getEmail(), user.getName(), user.getRole());
+    }
+
+    @Transactional
+    public ChangePasswordResponseDto changePassword(AuthUser authUser, ChangePasswordRequestDto changePasswordRequestDto) {
+        User user = userRepository.findById(authUser.getId()).orElseThrow(
+                () -> new NotFoundUserException("사용자를 찾을 수 없습니다.")
+        );
+
+        if (!passwordEncoder.matches(changePasswordRequestDto.getPassword(), user.getPassword())) {
+            throw new UserException("잘못된 비밀번호입니다.");
+        }
+        if (passwordEncoder.matches(changePasswordRequestDto.getNewPassword(), user.getPassword())) {
+            throw new UserException("현재 비밀번호와 새 비밀번호가 동일합니다.");
+        }
+
+        String newPassword = passwordEncoder.encode(changePasswordRequestDto.getNewPassword());
+
+        user.updatePassword(newPassword);
+
+        return new ChangePasswordResponseDto(user.getEmail(), user.getName(), user.getBirth(), user.getRole());
     }
 
 

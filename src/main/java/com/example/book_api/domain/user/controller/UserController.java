@@ -1,9 +1,8 @@
 package com.example.book_api.domain.user.controller;
 
-import com.example.book_api.domain.user.dto.ChangePasswordRequestDto;
-import com.example.book_api.domain.user.dto.ChangeUserRoleRequestDto;
-import com.example.book_api.domain.user.dto.ChangeUserRoleResponseDto;
-import com.example.book_api.domain.user.dto.FindUserResponseDto;
+import com.example.book_api.domain.auth.annotation.Auth;
+import com.example.book_api.domain.auth.dto.AuthUser;
+import com.example.book_api.domain.user.dto.*;
 import com.example.book_api.domain.user.service.UserService;
 import com.example.book_api.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -33,4 +32,12 @@ public class UserController {
         return ApiResponse.success(HttpStatus.OK, "권한 변경이 완료되었습니다.", changeUserRoleResponseDto);
     }
 
+    @PatchMapping("/users/password")
+    public ResponseEntity<ApiResponse<ChangePasswordResponseDto>> changePassword(
+            @Auth AuthUser authUser,
+            @RequestBody ChangePasswordRequestDto changePasswordRequestDto
+    ) {
+        ChangePasswordResponseDto changePasswordResponseDto = userService.changePassword(authUser, changePasswordRequestDto);
+        return ApiResponse.success(HttpStatus.OK, "비밀번호 변경이 완료되었습니다.", changePasswordResponseDto);
+    }
 }

@@ -25,11 +25,11 @@ public class JwtFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        String url = httpServletRequest.getRequestURI();
-        String method = httpServletRequest.getMethod();
+        String url = httpRequest.getRequestURI();
+        String method = httpRequest.getMethod();
 
         // "/auth" 로 시작하는 url 제외
         if (url.startsWith("/api/v1/auth")) {
@@ -37,11 +37,11 @@ public class JwtFilter implements Filter {
             return;
         }
 
-        String bearerJwt = httpServletRequest.getHeader("Authorization");
+        String bearerJwt = httpRequest.getHeader("Authorization");
 
         // 해더에서 토근 입력하지 않은 경우
         if (bearerJwt == null) {
-            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "토큰이 필요합니다.");
+            httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "토큰이 필요합니다.");
             return;
         }
 
@@ -50,15 +50,16 @@ public class JwtFilter implements Filter {
         try {
             Claims claims = jwtUtil.extractClaims(jwt);
             if (claims == null) {
-                httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "잘못된 토큰입니다.");
+                httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "잘못된 토큰입니다.");
                 return;
             }
 
             Role role = Role.valueOf(claims.get("role", String.class));
 
-            httpServletRequest.setAttribute("Id", Long.parseLong(claims.getSubject()));
-            httpServletRequest.setAttribute("email", claims.get("email"));
-            httpServletRequest.setAttribute("name", claims.get("name"));
+            httpRequest.setAttribute("id", Long.parseLong(claims.getSubject()));
+            httpRequest.setAttribute("email", claims.get("email"));
+            httpRequest.setAttribute("name", claims.get("name"));
+            httpRequest.setAttribute("role", claims.get("role",String.class));
 
             AntPathMatcher pathMatcher = new AntPathMatcher();
 
@@ -69,7 +70,7 @@ public class JwtFilter implements Filter {
                     (pathMatcher.match("/api/v1/users/{id}", url) && "PATCH".equalsIgnoreCase(method))
             ) {
                 if (!Role.ADMIN.equals(role)) {
-                    httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "관리자 권한이 없습니다.");
+                    httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "관리자 권한이 없습니다.");
                     return;
                 }
                 chain.doFilter(request,response);
@@ -78,7 +79,7 @@ public class JwtFilter implements Filter {
 
             chain.doFilter(request, response);
         } catch (SecurityException | MalformedJwtException e) {
-            httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 JWT 입니다.");
+            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 JWT 입니다.");
         }
     }
 
