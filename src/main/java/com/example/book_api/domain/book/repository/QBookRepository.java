@@ -6,8 +6,6 @@ import com.example.book_api.domain.book.enums.AgeGroup;
 import com.example.book_api.domain.book.enums.CategoryEnum;
 import com.example.book_api.domain.book.exception.InvalidSearchConditionException;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -77,7 +75,6 @@ public class QBookRepository {
     public Page<Book> searchAllFields(String keyword, Pageable pageable) {
         QBook book = QBook.book;
         BooleanBuilder builder = new BooleanBuilder();
-
 
         builder.or(book.title.containsIgnoreCase(keyword));
         builder.or(book.author.containsIgnoreCase(keyword));

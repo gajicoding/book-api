@@ -40,7 +40,6 @@ public class BookController {
     }
 
     // 책 전체 조회
-    // TODO: page, size 값  받아서 처리하기 , 제목 or 저자 검색 추가
     @GetMapping("/books")
     public ResponseEntity<ApiResponse<PagedResponse<BookResponseDto>>> findAll(
             @RequestParam(defaultValue = "1") int page,
