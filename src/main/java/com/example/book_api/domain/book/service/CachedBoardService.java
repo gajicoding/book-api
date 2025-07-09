@@ -15,19 +15,19 @@ public class CachedBoardService {
     private final BookService bookService;
     private final BookValidator bookValidator;
 
-    @Cacheable(value = "boardTop", key = "'all'")
+    @Cacheable(value = "bookTop", key = "'all'")
     public List<BookResponseDto> getTopBooksCached() {
         return bookService.getTopBooks();
     }
 
-    @Cacheable(value = "boardTop", key = "'category_' + #category")
+    @Cacheable(value = "bookTop", key = "'category_' + #category")
     public List<BookResponseDto> getTopBookByCategoryCached(String category) {
         bookValidator.validateCategory(category);
 
         return bookService.getTopBookByCategory(category);
     }
 
-    @Cacheable(value = "boardTop", key = "'ageGroup_' + #ageGroup")
+    @Cacheable(value = "bookTop", key = "'ageGroup_' + #ageGroup")
     public List<BookResponseDto> getTopBookByUserAgeCached(String ageGroup) {
         bookValidator.validateAgeGroup(ageGroup);
 
