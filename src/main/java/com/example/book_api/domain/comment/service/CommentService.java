@@ -11,12 +11,14 @@ import com.example.book_api.domain.comment.repository.CommentRepository;
 import com.example.book_api.domain.user.entity.User;
 import com.example.book_api.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,20 +37,6 @@ public class CommentService {
         Comment savedComment = commentRepository.save(comment);
 
         return new CommentResponseDto(savedComment.getId(), savedComment.getContent(), savedComment.getUser().getId(), savedComment.getBook().getId());
-    }
-
-    public List<CommentResponseDto> get(Long bookId) {
-
-        // bookId가 존재하는 지 확인
-        Book book = bookService.getBookById(bookId);
-
-        // bookId의 comment 가져오기
-        List<Comment> commentList = commentRepository.findAllByBookIdAndDeletedAtIsNull(bookId);
-
-        List<CommentResponseDto> responses = commentList.stream()
-                                            .map(comment -> new CommentResponseDto(comment.getId(), comment.getContent(), comment.getUser().getId(), comment.getBook().getId()))
-                                            .collect(Collectors.toList());
-        return responses;
     }
 
     public CommentResponseDto update(Long userId, Long id, CommentRequestDto request) {
@@ -80,5 +68,27 @@ public class CommentService {
         return commentRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(()-> new NotFoundException(HttpStatus.NOT_FOUND,
                         "해당 commentId를 찾을 수 없습니다."));
+    }
+
+    // 페이징 처리
+    public Page<CommentResponseDto> getCommentWithPaging(Long bookId, int page, int size) {
+        // bookId가 존재하는지 확인
+        Book book = bookService.getBookById(bookId);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Comment> paged = commentRepository.findAllByBookIdAndDeletedAtIsNull(bookId, pageable);
+        return paged.map(this::toCommentDto);
+    }
+
+    public Page<CommentResponseDto> getMyCommentWithPaging(Long userId, int page, int size) {
+        // TODO userId가 존재하는지 확인
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Comment> paged = commentRepository.findAllByUserIdAndDeletedAtIsNull(userId, pageable);
+        return paged.map(this::toCommentDto);
+    }
+
+    private CommentResponseDto toCommentDto(Comment comment) {
+        return new CommentResponseDto(comment.getId(), comment.getContent(), comment.getUser().getId(), comment.getBook().getId());
     }
 }
