@@ -1,15 +1,15 @@
 package com.example.book_api.domain.user.controller;
 
+import com.example.book_api.domain.user.dto.ChangePasswordRequestDto;
+import com.example.book_api.domain.user.dto.ChangeUserRoleRequestDto;
+import com.example.book_api.domain.user.dto.ChangeUserRoleResponseDto;
 import com.example.book_api.domain.user.dto.FindUserResponseDto;
 import com.example.book_api.domain.user.service.UserService;
 import com.example.book_api.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1")
@@ -23,4 +23,14 @@ public class UserController {
         FindUserResponseDto findUserResponseDto = userService.findUser(id);
         return ApiResponse.success(HttpStatus.OK, "조회를 완료했습니다.", findUserResponseDto);
     }
+
+    @PatchMapping("/users/{id}")
+    public ResponseEntity<ApiResponse<ChangeUserRoleResponseDto>> changeUserRole(
+            @PathVariable("id") Long id,
+            @RequestBody ChangeUserRoleRequestDto changeUserRoleRequestDto
+    ) {
+        ChangeUserRoleResponseDto changeUserRoleResponseDto = userService.changeUserRole(id, changeUserRoleRequestDto);
+        return ApiResponse.success(HttpStatus.OK, "권한 변경이 완료되었습니다.", changeUserRoleResponseDto);
+    }
+
 }
