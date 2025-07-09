@@ -23,6 +23,8 @@ public class Log {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long userId;
+
     @Enumerated(value = EnumType.STRING)
     private TargetType targetType;
 
@@ -43,13 +45,10 @@ public class Log {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
 
     @Builder
     public Log(
-            User user,
+            Long userId,
             TargetType targetType,
             Long targetId,
             RequestMethod requestMethod,
@@ -58,8 +57,7 @@ public class Log {
             int statusCode,
             String message
     ) {
-        UserService userService;
-        this.user = user;
+        this.userId = userId;
         this.targetType = targetType;
         this.targetId = targetId;
         this.requestMethod = requestMethod;

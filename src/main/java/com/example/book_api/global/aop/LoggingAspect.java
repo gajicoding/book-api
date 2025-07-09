@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.weaver.Lint;
 import org.springframework.data.util.ReflectionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -40,10 +41,7 @@ public class LoggingAspect {
         HttpServletRequest request =
                 ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
-        // 메서드 실행 이전, 요청값 추출
-        Long userId = extractUserId();
-        User user = userRepository.findById(Objects.requireNonNull(userId)).orElseThrow(); // service 계층으로 변경 필요
-
+        // 메서드 실행 이전 초기화 설정
         Object result;
         int statusCode = 500;
         String message = "알 수 없는 오류";
@@ -69,20 +67,21 @@ public class LoggingAspect {
             throw e;
 
         } finally {
-            Log logDate = buildLog(joinPoint, logging, request, userId, statusCode, message, targetId);
+            Log logDate = buildLog(joinPoint, logging, request, statusCode, message, targetId);
             logService.saveLog(logDate);
         }
     }
 
     private Log buildLog(ProceedingJoinPoint joinPoint, Logging logging, HttpServletRequest request,
-                         Long userId, int statusCode, String message, Long targetId) {
+                         int statusCode, String message, Long targetId) {
+        //Long userId = extractUserId();
         String uri = request.getRequestURI();
         TargetType targetType = extractTargetType(uri);
         RequestMethod requestMethod = extractRequestMethod(request);
         ActivityType activityType = logging.activityType();
 
         return Log.builder()
-                .user(new User())
+                //.userId(userId)
                 .targetType(targetType)
                 .targetId(targetId)
                 .requestMethod(requestMethod)
