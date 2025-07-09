@@ -43,7 +43,7 @@ public class CommentService {
 
         Comment comment = getCommentById(id);
         if(!comment.getUser().getId().equals(userId)) {
-            throw new CommentException("수정 할 권한이 없습니다. (작성자와 유저 불일치)");
+            throw new CommentException("수정할 권한이 없습니다. (로그인한 유저와 댓글 작성자 불일치)");
         }
         comment.changeContent(request.getContent());
         Comment savedComment = commentRepository.save(comment);
@@ -55,7 +55,7 @@ public class CommentService {
 
         Comment comment = getCommentById(id);
         if(!comment.getUser().getId().equals(userId)) {
-            throw new CommentException("삭제 할 권한이 없습니다. (작성자와 유저 불일치)");
+            throw new CommentException("삭제할 권한이 없습니다. (로그인한 유저와 댓글 작성자 불일치)");
         }
 
         comment.delete(); // soft delete
@@ -72,7 +72,7 @@ public class CommentService {
 
     // 페이징 처리
     public Page<CommentResponseDto> getCommentWithPaging(Long bookId, int page, int size) {
-        // bookId가 존재하는지 확인
+        // bookId가 존재하는지 검사
         Book book = bookService.getBookById(bookId);
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
@@ -80,8 +80,11 @@ public class CommentService {
         return paged.map(this::toCommentDto);
     }
 
-    public Page<CommentResponseDto> getMyCommentWithPaging(Long userId, int page, int size) {
-        // TODO userId가 존재하는지 확인
+    public Page<CommentResponseDto> getMyCommentWithPaging(Long loginId, Long userId, int page, int size) {
+        // 검사
+        if(!loginId.equals(userId)) {
+            throw new CommentException("조회할 권한이 없습니다. (로그인한 유저와 댓글 작성자 불일치)");
+        }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Comment> paged = commentRepository.findAllByUserIdAndDeletedAtIsNull(userId, pageable);

@@ -1,5 +1,7 @@
 package com.example.book_api.domain.comment.controller;
 
+import com.example.book_api.domain.auth.annotation.Auth;
+import com.example.book_api.domain.auth.dto.AuthUser;
 import com.example.book_api.domain.comment.dto.CommentRequestDto;
 import com.example.book_api.domain.comment.dto.CommentResponseDto;
 import com.example.book_api.domain.comment.service.CommentService;
@@ -13,9 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-// TODO 기능 구현 모두 완료 후, 요구사항 확인 후 수정 / api문서도 수정
-// TODO API, Entity(varchar)와 일치하는지 확인 수정
-// TODO Validated 예외처리
 @RestController
 @RequestMapping("/v1")
 @RequiredArgsConstructor
@@ -26,14 +25,12 @@ public class CommentController {
     @PostMapping("/books/{bookId}/comments")
     public ResponseEntity<ApiResponse<CommentResponseDto>> create(
             @PathVariable Long bookId,
-            @RequestBody @Validated CommentRequestDto request
-    ) {
-        // TODO 인가 처리
-        Long userId = 1L;
+            @RequestBody @Validated CommentRequestDto request,      // TODO Validated globalException 처리
+            @Auth AuthUser authUser
+            ) {
+        CommentResponseDto response = commentService.create(authUser.getId(), bookId, request);
 
-        CommentResponseDto response = commentService.create(userId, bookId, request);
-
-        return ApiResponse.success(HttpStatus.CREATED, userId + ": 댓글이 생성되었습니다.", response);
+        return ApiResponse.success(HttpStatus.CREATED, "댓글이 생성되었습니다.", response);
     }
 
     // read : 댓글 목록 조회
@@ -47,7 +44,7 @@ public class CommentController {
         Page<CommentResponseDto> paged = commentService.getCommentWithPaging(bookId, page, size);
         PagedResponse<CommentResponseDto> responses = PagedResponse.toPagedResponse(paged);
 
-        return ApiResponse.success(HttpStatus.OK, bookId + "번 책 댓글이 조회되었습니다.", responses);
+        return ApiResponse.success(HttpStatus.OK, "책 댓글이 조회되었습니다.", responses);
     }
 
     // read : 내가 쓴 댓글 조회
@@ -55,10 +52,11 @@ public class CommentController {
     public ResponseEntity<ApiResponse<PagedResponse<CommentResponseDto>>> getMyComments(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @Auth AuthUser authUser
     ) {
         // 페이징
-        Page<CommentResponseDto> paged = commentService.getMyCommentWithPaging(userId, page, size);
+        Page<CommentResponseDto> paged = commentService.getMyCommentWithPaging(authUser.getId(), userId, page, size);
         PagedResponse<CommentResponseDto> responses = PagedResponse.toPagedResponse(paged);
 
         return ApiResponse.success(HttpStatus.OK, "댓글이 조회되었습니다", responses);
@@ -69,27 +67,21 @@ public class CommentController {
     @PatchMapping("/comments/{id}")
     public ResponseEntity<ApiResponse<CommentResponseDto>> update(
             @PathVariable Long id,
-            @RequestBody CommentRequestDto request
+            @RequestBody CommentRequestDto request,
+            @Auth AuthUser authUser
     ) {
+        CommentResponseDto response = commentService.update(authUser.getId(), id, request);
 
-        // TODO 인가 처리
-        Long userId = 1L;
-
-        CommentResponseDto response = commentService.update(userId, id, request);
-
-        return ApiResponse.success(HttpStatus.OK, userId + "댓글이 수정되었습니다.", response);
+        return ApiResponse.success(HttpStatus.OK, "댓글이 수정되었습니다.", response);
     }
 
     // delete
     @DeleteMapping("/comments/{id}")
     public ResponseEntity<ApiResponse<LocalDateTime>> delete(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @Auth AuthUser authUser
     ) {
-
-        // TODO 인가 처리
-        Long userId = 1L;
-
-        LocalDateTime deletedAt = commentService.delete(userId, id);
+        LocalDateTime deletedAt = commentService.delete(authUser.getId(), id);
         return ApiResponse.success(HttpStatus.OK, "댓글이 삭제되었습니다.", deletedAt);
     }
 }
