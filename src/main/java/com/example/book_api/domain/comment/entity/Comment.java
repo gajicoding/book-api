@@ -6,8 +6,6 @@ import com.example.book_api.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Entity
 public class Comment extends BaseEntity {
@@ -28,9 +26,6 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book; // 책
 
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
-
     public Comment(){}
 
     public Comment(String content, User user, Book book) {
@@ -39,7 +34,7 @@ public class Comment extends BaseEntity {
         this.book = book;
     }
 
-    public void delete() {
-        this.deletedAt = LocalDateTime.now();
+    public void changeContent(String content) {
+        this.content = content;
     }
 }
