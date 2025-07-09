@@ -1,0 +1,120 @@
+package com.example.book_api.domain.rating.service;
+
+import com.example.book_api.domain.book.entity.Book;
+import com.example.book_api.domain.book.service.BookService;
+import com.example.book_api.domain.rating.dto.request.RatingRequestDto;
+import com.example.book_api.domain.rating.dto.response.AverageRatingResponse;
+import com.example.book_api.domain.rating.dto.response.MyRatingResponse;
+import com.example.book_api.domain.rating.dto.response.RatingDistributionResponse;
+import com.example.book_api.domain.rating.dto.response.TopRatedBookResponse;
+import com.example.book_api.domain.rating.entity.Rating;
+import com.example.book_api.domain.rating.repository.RatingRepository;
+import com.example.book_api.domain.user.entity.User;
+import com.example.book_api.domain.user.service.UserService;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.*;
+
+@Service
+@RequiredArgsConstructor
+public class RatingService {
+
+    private final RatingRepository ratingRepository;
+    private final BookService bookService;
+    private final UserService userService;
+
+    @Transactional
+    public void createRating(Long bookId, RatingRequestDto request, Long userId) {
+        Book book = bookService.getBookById(bookId);
+        User user = userService.getUserById(userId);
+
+        if (ratingRepository.existsByBookAndUser(book, user)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 평점을 등록한 책입니다.");
+        }
+
+        Rating rating = Rating.builder()
+                .score(request.getScore())
+                .book(book)
+                .user(user)
+                .build();
+
+        ratingRepository.save(rating);
+    }
+
+    @Transactional
+    public void updateRating(Long bookId, RatingRequestDto request, Long userId) {
+        Book book = bookService.getBookById(bookId);
+        User user = userService.getUserById(userId);
+
+        Rating rating = ratingRepository.findByBookAndUser(book, user)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "평점을 찾을 수 없습니다."));
+
+        rating.updateScore(request.getScore());
+    }
+
+    @Transactional
+    public void deleteRating(Long bookId, Long userId) {
+        Book book = bookService.getBookById(bookId);
+        User user = userService.getUserById(userId);
+
+        Rating rating = ratingRepository.findByBookAndUser(book, user)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "평점을 찾을 수 없습니다."));
+
+        ratingRepository.delete(rating);
+    }
+
+    //내가 남긴 평점 조회
+    public MyRatingResponse getMyRating(Long bookId, Long userId) {
+        Book book = bookService.getBookById(bookId);
+        User user = userService.getUserById(userId);
+
+        Rating rating = ratingRepository.findByBookAndUser(book, user)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "평점을 찾을 수 없습니다."));
+
+        return new MyRatingResponse(book.getId(), rating.getScore());
+    }
+
+    //책 평점 평균 조회
+    public AverageRatingResponse getAverageRating(Long bookId) {
+        Book book = bookService.getBookById(bookId);
+
+        Double average = ratingRepository.findAverageByBook(book);
+        Long count = ratingRepository.countByBook(book);
+
+        return new AverageRatingResponse(book.getId(), average != null ? average : 0.0, count);
+    }
+
+    //책 평점 분포 조회
+    public List<RatingDistributionResponse> getRatingDistribution(Long bookId) {
+        Book book = bookService.getBookById(bookId);
+
+        List<Object[]> result = ratingRepository.countGroupByScore(book);
+
+        return result.stream()
+                .map(row -> new RatingDistributionResponse((int) row[0], (long) row[1]))
+                .toList();
+    }
+
+    //평점 높은 순 top 10
+    public List<TopRatedBookResponse> getTop10RatedBooks() {
+        List<Object[]> result = ratingRepository.findTop10BooksByAverageScore();
+
+        //순서대로 bookId, title, avg, count
+        return result.stream()
+                .map(row -> new TopRatedBookResponse(
+                        (Long) row[0],
+                        (String) row[1],
+                        (Double) row[2],
+                        (Long) row[3]
+                )).toList();
+    }
+
+}
+
+
