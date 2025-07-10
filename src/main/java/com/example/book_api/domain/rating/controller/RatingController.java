@@ -14,7 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/books")
+@RequestMapping("/v1")
 @RequiredArgsConstructor
 public class RatingController {
 
@@ -48,19 +48,19 @@ public class RatingController {
     }
 
     //책 평점 평균 조회
-    @GetMapping("/v1/books/{bookId}/ratings")
+    @GetMapping("/books/{bookId}/ratings")
     public AverageRatingResponse getAverageRating(@PathVariable Long bookId) {
         return ratingService.getAverageRating(bookId);
     }
 
     //책 평점 분포 조회
-    @GetMapping("/v1/books/{bookId}/ratings/distribution")
+    @GetMapping("/books/{bookId}/ratings/distribution")
     public List<RatingDistributionResponse> getDistribution(@PathVariable Long bookId) {
         return ratingService.getRatingDistribution(bookId);
     }
 
     //평점 높은 순 top 10
-    @GetMapping("/v1/books/top/ratings")
+    @GetMapping("/books/top/ratings")
     public List<TopRatedBookResponse> getTopRatedBooks() {
         return ratingService.getTop10RatedBooks();
     }
