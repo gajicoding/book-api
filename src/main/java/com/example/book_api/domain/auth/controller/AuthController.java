@@ -5,9 +5,12 @@ import com.example.book_api.domain.auth.dto.SignInResponseDto;
 import com.example.book_api.domain.auth.dto.SignUpRequestDto;
 import com.example.book_api.domain.auth.dto.SignUpResponseDto;
 import com.example.book_api.domain.auth.service.AuthService;
+import com.example.book_api.domain.user.entity.User;
+import com.example.book_api.global.config.JwtUtil;
 import com.example.book_api.global.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final JwtUtil jwtUtil;
 
 
     @PostMapping("/auth/signup")
@@ -32,7 +36,13 @@ public class AuthController {
     @PostMapping("/auth/signin")
     public ResponseEntity<ApiResponse<SignInResponseDto>> signIn(@RequestBody SignInRequestDto signInRequestDto) {
         SignInResponseDto signInResponseDto = authService.signIn(signInRequestDto);
-        return ApiResponse.success(HttpStatus.OK, "로그인이 완료되었습니다.", signInResponseDto);
+        User user = authService.findUser(signInResponseDto.getEmail());
+
+        String token = jwtUtil.createToken(user);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("Authorization", token);
+
+        return ApiResponse.success(HttpStatus.OK, "로그인이 완료되었습니다.", signInResponseDto, httpHeaders);
     }
 
 }
