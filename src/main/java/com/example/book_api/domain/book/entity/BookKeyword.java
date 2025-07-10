@@ -5,13 +5,15 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Table(name = "keyword")
+@Table(name = "book_keyword")
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class BookKeyword {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,9 +21,6 @@ public class BookKeyword {
 
     private String keyword;
 
-    @ManyToOne
-    @JoinColumn(name = "book_id")
-    private Book book;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -30,4 +29,9 @@ public class BookKeyword {
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    public BookKeyword(String keyword, User user) {
+        this.keyword = keyword;
+        this.user = user;
+    }
 }

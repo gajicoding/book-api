@@ -87,4 +87,9 @@ public class UserService {
                 () -> new UserException("가입되지 않은 이메일입니다."));
     }
 
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
+    }
+
 }

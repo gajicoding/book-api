@@ -1,23 +1,22 @@
 package com.example.book_api.domain.book.repository;
 
+import com.example.book_api.domain.book.dto.BookTrendResponseDto;
 import com.example.book_api.domain.book.entity.Book;
 import com.example.book_api.domain.book.entity.QBook;
+import com.example.book_api.domain.book.entity.QBookKeyword;
 import com.example.book_api.domain.book.enums.AgeGroup;
 import com.example.book_api.domain.book.enums.CategoryEnum;
-import com.example.book_api.domain.book.exception.InvalidSearchConditionException;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Wildcard;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.Year;
 import java.util.List;
 
 import static com.example.book_api.domain.book.entity.QBook.book;
@@ -77,25 +76,21 @@ public class QBookRepository {
         QBook book = QBook.book;
         BooleanBuilder builder = new BooleanBuilder();
 
+
         builder.or(book.title.containsIgnoreCase(keyword));
         builder.or(book.author.containsIgnoreCase(keyword));
         builder.or(book.publisher.containsIgnoreCase(keyword));
-        builder.or(book.publicationYear.eq(Year.parse(keyword)));
-        builder.or(book.category.stringValue().containsIgnoreCase(keyword));
 
-        JPAQuery<Book> query = queryFactory.selectFrom(book).where(builder);
-
-        long total = queryFactory.select(Wildcard.count).from(book).where(builder).fetchOne();
-
-
-        List<Book> content = query
-                .offset(pageable.getOffset())
+        List<Book> content = queryFactory.selectFrom(book).where(builder).offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(book.id.desc()).fetch();
 
-        if (content.isEmpty()) {
-            throw new InvalidSearchConditionException(HttpStatus.NOT_FOUND,"키워드에 해당하는 책이 없습니다. 다시 입력해주세요.");
-        }
+        long total = queryFactory
+                .select(Wildcard.count)
+                .from(book)
+                .where(builder)
+                .fetchOne();
+
 
         return new PageImpl<>(content, pageable, total);
     }
@@ -113,6 +108,22 @@ public class QBookRepository {
                 .where(builder)
                 .orderBy(book.id.desc()) // 내림차순
                 .limit(size)
+                .fetch();
+    }
+
+
+    public List<BookTrendResponseDto> findTrend() {
+        QBookKeyword keyword = QBookKeyword.bookKeyword;
+        return queryFactory
+                .select(Projections.constructor( // dto로 전환
+                        BookTrendResponseDto.class,
+                        keyword.keyword,
+                        keyword.count()
+                ))
+                .from(keyword)
+                .groupBy(keyword.keyword)
+                .orderBy(keyword.count().desc())
+                .limit(10)
                 .fetch();
     }
 }
