@@ -15,9 +15,9 @@ import com.example.book_api.domain.user.entity.User;
 import com.example.book_api.domain.user.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -95,26 +95,12 @@ public class RatingService {
     //책 평점 분포 조회
     public List<RatingDistributionResponse> getRatingDistribution(Long bookId) {
         Book book = bookService.getBookById(bookId);
-
-        List<Object[]> result = ratingRepository.countGroupByScore(book);
-
-        return result.stream()
-                .map(row -> new RatingDistributionResponse((int) row[0], (long) row[1]))
-                .toList();
+        return ratingRepository.countGroupByScore(book);
     }
 
     //평점 높은 순 top 10
     public List<TopRatedBookResponse> getTop10RatedBooks() {
-        List<Object[]> result = ratingRepository.findTop10BooksByAverageScore();
-
-        //순서대로 bookId, title, avg, count
-        return result.stream()
-                .map(row -> new TopRatedBookResponse(
-                        (Long) row[0],
-                        (String) row[1],
-                        (Double) row[2],
-                        (Long) row[3]
-                )).toList();
+        return ratingRepository.findTop10BooksByAverageScore(PageRequest.of(0, 10));
     }
 
 }

@@ -1,6 +1,8 @@
 package com.example.book_api.domain.rating.repository;
 
 import com.example.book_api.domain.book.entity.Book;
+import com.example.book_api.domain.rating.dto.response.RatingDistributionResponse;
+import com.example.book_api.domain.rating.dto.response.TopRatedBookResponse;
 import com.example.book_api.domain.rating.entity.Rating;
 import com.example.book_api.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
@@ -21,16 +23,17 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
 
     long countByBook(Book book);
 
-    //스코어 분포
+    //책 평점 분포
     @Query("SELECT r.score, COUNT(r) FROM Rating r WHERE r.book = :book GROUP BY r.score")
-    List<Object[]> countGroupByScore(@Param("book") Book book);
+    List<RatingDistributionResponse> countGroupByScore(@Param("book") Book book);
 
+    //평점 탑10
     @Query("""
         SELECT r.book.id, r.book.title, AVG(r.score), COUNT(r)
         FROM Rating r
         GROUP BY r.book.id, r.book.title
         ORDER BY AVG(r.score) DESC
         """)
-    List<Object[]> findTop10BooksByAverageScore(Pageable pageable);
+    List<TopRatedBookResponse> findTop10BooksByAverageScore(Pageable pageable);
 }
 
