@@ -1,9 +1,9 @@
 package com.example.book_api.domain.book.unit.controller;
 
-import com.example.book_api.domain.book.controller.BookController;
+import com.example.book_api.domain.book.controller.BookControllerV2;
 import com.example.book_api.domain.book.dto.BookResponseDto;
 import com.example.book_api.domain.book.enums.CategoryEnum;
-import com.example.book_api.domain.book.service.BookService;
+import com.example.book_api.domain.book.service.CachedBookService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,25 +20,25 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(BookController.class)
+@WebMvcTest(BookControllerV2.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class BookControllerTest {
+public class BookControllerV2Test {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
-    private BookService bookService;
+    private CachedBookService cachedBookService;
 
     @Test
     void 책_전체_TOP_10_조회() throws Exception {
 
         // given
-        when(bookService.getTopBooks()).thenReturn(createMockBookResponseDto());
+        when(cachedBookService.getTopBooksCached()).thenReturn(createMockBookResponseDto());
 
         // when
         ResultActions result = mockMvc.perform(
-                get("/v1/books/top")
+                get("/v2/books/top")
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -50,11 +50,11 @@ public class BookControllerTest {
     void 책_카테고리별_TOP_10_조회() throws Exception {
 
         // given
-        when(bookService.getTopBookByCategory("GENERAL")).thenReturn(createMockBookResponseDto());
+        when(cachedBookService.getTopBookByCategoryCached("GENERAL")).thenReturn(createMockBookResponseDto());
 
         // when
         ResultActions result = mockMvc.perform(
-                get("/v1/books/top/categories")
+                get("/v2/books/top/categories")
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -66,11 +66,11 @@ public class BookControllerTest {
     void 책_나이대별_TOP_10_조회() throws Exception {
 
         // given
-        when(bookService.getTopBookByUserAge("TEENS_EARLY")).thenReturn(createMockBookResponseDto());
+        when(cachedBookService.getTopBookByUserAgeCached("TEENS_EARLY")).thenReturn(createMockBookResponseDto());
 
         // when
         ResultActions result = mockMvc.perform(
-                get("/v1/books/top/ages")
+                get("/v2/books/top/ages")
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
