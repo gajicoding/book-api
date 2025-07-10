@@ -61,6 +61,8 @@ public class BookController {
         );
     }
 
+    // 책
+
     // 책 수정
     @PatchMapping("/books/{id}")
     public ResponseEntity<ApiResponse<BookResponseDto>> update(
