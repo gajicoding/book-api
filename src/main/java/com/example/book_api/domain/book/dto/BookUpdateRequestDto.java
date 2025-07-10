@@ -14,6 +14,6 @@ public class BookUpdateRequestDto {
     private String author;
     private String publisher;
     private Year publicationYear;
-    private Long isbn;
+    private String isbn;
     private CategoryEnum category;
 }

@@ -5,10 +5,10 @@ import com.example.book_api.domain.book.dto.BookRegistResquestDto;
 import com.example.book_api.domain.book.dto.BookUpdateRequestDto;
 import com.example.book_api.domain.book.service.BookService;
 import com.example.book_api.global.dto.ApiResponse;
+import com.example.book_api.global.dto.PagedResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,15 +39,27 @@ public class BookController {
     }
 
     // 책 전체 조회
-    // TODO: page, size 값  받아서 처리하기
     @GetMapping("/books")
-    public ResponseEntity<ApiResponse<Page<BookResponseDto>>> findAll(Pageable pageable) {
-        Page<BookResponseDto> page = bookService.findAll(pageable);
+    public ResponseEntity<ApiResponse<PagedResponse<BookResponseDto>>> findAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword) {
+        Page<BookResponseDto> pageAll = bookService.findAll(page, size, keyword);
         return ApiResponse.success(
-                HttpStatus.OK, "성공적으로 조회되었습니다.", page);
+                HttpStatus.OK, "성공적으로 조회되었습니다.", PagedResponse.toPagedResponse(pageAll)
+        );
     }
 
-    // TODO: Cursor 방식 페이징 API 추가
+    // 책 전체 조회 cursor방식
+    @GetMapping("/books/cursor")
+    public ResponseEntity<ApiResponse<List<BookResponseDto>>> findAllByCursor(
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "10") Long size
+    ) {
+        return ApiResponse.success(
+                HttpStatus.OK,"성공적으로 조회되었습니다.", bookService.findAllByCursor(cursor, size)
+        );
+    }
 
     // 책 수정
     @PatchMapping("/books/{id}")
@@ -55,7 +67,9 @@ public class BookController {
             @PathVariable Long id,
             @RequestBody BookUpdateRequestDto requestDto
     ) {
-        return ApiResponse.success(HttpStatus.OK, "책이 수정되었습니다.", bookService.update(id, requestDto));
+        return ApiResponse.success(
+                HttpStatus.OK, "책이 수정되었습니다.", bookService.update(id, requestDto)
+        );
     }
 
     // 책 삭제
