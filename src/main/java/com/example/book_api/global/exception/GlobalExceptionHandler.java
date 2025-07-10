@@ -12,27 +12,23 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /* 도메인별 예외 */
+
+    // Book
     @ExceptionHandler(BookException.class)
     public ResponseEntity<ApiResponse<Void>> handleBookException(BookException e) {
         return ApiResponse.error(e.getStatus(), e.getMessage());
     }
 
-
-    // 예상치 못한 전체 예외 (최후의 보루)
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleGenericException() {
-        String message = "서버 내부 오류가 발생했습니다.";
-        return ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, message);
-    }
-
-    //
+    // User
     @ExceptionHandler(UserException.class)
-    public ResponseEntity<ApiResponse<Void>> UserException(UserException ex) {
+    public ResponseEntity<ApiResponse<Void>> handleUserException(UserException ex) {
         return ApiResponse.error(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    // Comment
     @ExceptionHandler(CommentException.class)
-    public ResponseEntity<ApiResponse<Void>> CommentException(CommentException ex) {
+    public ResponseEntity<ApiResponse<Void>> handleCommentException(CommentException ex) {
         return ApiResponse.error(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 }
