@@ -3,7 +3,7 @@ spring:
     name: book-api
 
   datasource:
-    url: ${DB_URL}
+    url: ${DB_URL}?rewriteBatchedStatements=true
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
@@ -30,3 +30,7 @@ server:
 jwt:
   secret:
     key: ${SECRET_KEY}
+
+logging:
+  level:
+    org.springframework.jdbc.core: DEBUG
