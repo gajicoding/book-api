@@ -28,13 +28,13 @@ public class Book extends BaseEntity {
     private String author;
     private String publisher;
     private Year publicationYear;
-    private Long isbn;
+    private String isbn;
 
     @Enumerated(EnumType.STRING)
     private CategoryEnum category;
 
 
-    public Book(String title, String author, String publisher, Year publicationYear, Long isbn, CategoryEnum category) {
+    public Book(String title, String author, String publisher, Year publicationYear, String isbn, CategoryEnum category) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;

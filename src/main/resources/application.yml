@@ -13,6 +13,11 @@ spring:
     hibernate:
       ddl-auto: create
 
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
   mvc:
     servlet:
       path: /api

@@ -4,20 +4,22 @@ import com.example.book_api.domain.book.entity.Book;
 import com.example.book_api.domain.book.enums.CategoryEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.Year;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class BookResponseDto {
 
-    private final Long id;
-    private final String title;
-    private final String author;
-    private final String publisher;
-    private final Year publicationYear;
-    private final Long isbn;
-    private final CategoryEnum category;
+    private Long id;
+    private String title;
+    private String author;
+    private String publisher;
+    private Year publicationYear;
+    private String isbn;
+    private CategoryEnum category;
 
     public BookResponseDto(Book book) {
         this.id = book.getId();

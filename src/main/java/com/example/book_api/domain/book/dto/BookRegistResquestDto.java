@@ -22,7 +22,7 @@ public class BookRegistResquestDto {
     @NotNull
     private Year publicationYear;
     @NotNull
-    private Long isbn;
+    private String isbn;
     @NotNull
     private CategoryEnum category;
 

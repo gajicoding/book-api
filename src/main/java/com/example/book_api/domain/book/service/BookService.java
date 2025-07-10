@@ -6,10 +6,10 @@ import com.example.book_api.domain.book.dto.BookUpdateRequestDto;
 import com.example.book_api.domain.book.entity.Book;
 import com.example.book_api.domain.book.enums.AgeGroup;
 import com.example.book_api.domain.book.enums.CategoryEnum;
-import com.example.book_api.domain.book.exception.InvalidSearchConditionException;
 import com.example.book_api.domain.book.exception.NotFoundException;
 import com.example.book_api.domain.book.repository.BookRepository;
 import com.example.book_api.domain.book.repository.QBookRepository;
+import com.example.book_api.domain.book.validation.BookValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +28,7 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final QBookRepository qBookRepository;
+    private final BookValidator bookValidator;
 
     // 책 등록
     public BookResponseDto regist(BookRegistResquestDto resquestDto) {
@@ -94,9 +95,7 @@ public class BookService {
 
     // 책 카테고리별 top 10
     public List<BookResponseDto> getTopBookByCategory(String category) {
-        CategoryEnum categoryEnum = CategoryEnum.of(category).orElseThrow(()
-                -> new InvalidSearchConditionException(HttpStatus.BAD_REQUEST, "검색 조건이 올바르지 않습니다: " + category)
-        );
+        CategoryEnum categoryEnum = bookValidator.validateCategory(category);
 
         return qBookRepository.findTop10BooksByCategory(categoryEnum)
                 .stream()
@@ -106,16 +105,13 @@ public class BookService {
 
     // 책 나이대 별 top 10
     public List<BookResponseDto> getTopBookByUserAge(String ageGroup) {
-        AgeGroup ageGroupEnum = AgeGroup.of(ageGroup).orElseThrow(()
-                -> new InvalidSearchConditionException(HttpStatus.BAD_REQUEST, "검색 조건이 올바르지 않습니다: " + ageGroup)
-        );
+        AgeGroup ageGroupEnum = bookValidator.validateAgeGroup(ageGroup);
 
         return qBookRepository.findTop10BooksByAgeGroup(ageGroupEnum)
                 .stream()
                 .map(BookResponseDto::new)
                 .toList();
     }
-
 
     /* 도메인 관련 메서드 */
 
