@@ -89,6 +89,6 @@ public class UserService {
 
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(
-                ()-> new NotFoundUserException("해당 id로 책을 찾을 수 없습니다. 다른 id를 입력해주세요!"));
+                ()-> new NotFoundUserException("해당 id로 유저을 찾을 수 없습니다. 다른 id를 입력해주세요!"));
     }
 }
