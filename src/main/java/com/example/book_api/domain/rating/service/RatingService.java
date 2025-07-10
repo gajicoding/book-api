@@ -8,6 +8,8 @@ import com.example.book_api.domain.rating.dto.response.MyRatingResponse;
 import com.example.book_api.domain.rating.dto.response.RatingDistributionResponse;
 import com.example.book_api.domain.rating.dto.response.TopRatedBookResponse;
 import com.example.book_api.domain.rating.entity.Rating;
+import com.example.book_api.domain.rating.exception.RatingErrorCode;
+import com.example.book_api.domain.rating.exception.RatingException;
 import com.example.book_api.domain.rating.repository.RatingRepository;
 import com.example.book_api.domain.user.entity.User;
 import com.example.book_api.domain.user.service.UserService;
@@ -35,7 +37,7 @@ public class RatingService {
         User user = userService.getUserById(userId);
 
         if (ratingRepository.existsByBookAndUser(book, user)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 평점을 등록한 책입니다.");
+            throw new RatingException(RatingErrorCode.DUPLICATE_RATING);
         }
 
         Rating rating = Rating.builder()
@@ -53,7 +55,7 @@ public class RatingService {
         User user = userService.getUserById(userId);
 
         Rating rating = ratingRepository.findByBookAndUser(book, user)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "평점을 찾을 수 없습니다."));
+                .orElseThrow(() -> new RatingException(RatingErrorCode.RATING_NOT_FOUND));
 
         rating.updateScore(request.getScore());
     }
@@ -64,7 +66,7 @@ public class RatingService {
         User user = userService.getUserById(userId);
 
         Rating rating = ratingRepository.findByBookAndUser(book, user)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "평점을 찾을 수 없습니다."));
+                .orElseThrow(() -> new RatingException(RatingErrorCode.RATING_NOT_FOUND));
 
         ratingRepository.delete(rating);
     }
@@ -75,7 +77,7 @@ public class RatingService {
         User user = userService.getUserById(userId);
 
         Rating rating = ratingRepository.findByBookAndUser(book, user)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "평점을 찾을 수 없습니다."));
+                .orElseThrow(() -> new RatingException(RatingErrorCode.RATING_NOT_FOUND));
 
         return new MyRatingResponse(book.getId(), rating.getScore());
     }
