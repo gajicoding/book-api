@@ -65,5 +65,6 @@ public class Log {
         this.activityType = activityType;
         this.statusCode = statusCode;
         this.message = message;
+        this.createdAt = LocalDateTime.now();
     }
 }
