@@ -9,6 +9,7 @@ import com.example.book_api.domain.user.exception.UserException;
 import com.example.book_api.domain.user.repository.UserRepository;
 import com.example.book_api.global.config.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,4 +88,8 @@ public class UserService {
                 () -> new UserException("가입되지 않은 이메일입니다."));
     }
 
+    public User findById(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                ()-> new NotFoundUserException("해당 id로 책을 찾을 수 없습니다. 다른 id를 입력해주세요!"));
+    }
 }
