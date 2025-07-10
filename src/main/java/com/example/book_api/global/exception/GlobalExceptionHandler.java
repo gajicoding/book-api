@@ -1,6 +1,7 @@
 package com.example.book_api.global.exception;
 
 import com.example.book_api.domain.book.exception.BookException;
+import com.example.book_api.domain.comment.exception.CommentException;
 import com.example.book_api.domain.user.exception.UserException;
 import com.example.book_api.global.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,11 @@ public class GlobalExceptionHandler {
     //
     @ExceptionHandler(UserException.class)
     public ResponseEntity<ApiResponse<Void>> UserException(UserException ex) {
+        return ApiResponse.error(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(CommentException.class)
+    public ResponseEntity<ApiResponse<Void>> CommentException(CommentException ex) {
         return ApiResponse.error(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 }
