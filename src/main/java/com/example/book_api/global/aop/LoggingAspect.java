@@ -9,6 +9,8 @@ import com.example.book_api.domain.log.service.LogService;
 import com.example.book_api.domain.user.entity.User;
 import com.example.book_api.domain.user.repository.UserRepository;
 import com.example.book_api.global.annotation.Logging;
+import com.example.book_api.global.config.JwtUtil;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,7 @@ public class LoggingAspect {
 
     private final LogService logService;
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     @Around("@annotation(logging)")
     public Object logActivity(ProceedingJoinPoint joinPoint, Logging logging) throws Throwable {
@@ -42,11 +45,10 @@ public class LoggingAspect {
                 ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
         // 메서드 실행 이전 초기화 설정
-        Object result;
         int statusCode = 500;
         String message = "알 수 없는 오류";
         Long targetId = null;
-
+        Object result;
 
         try {
             result = joinPoint.proceed();
@@ -67,21 +69,21 @@ public class LoggingAspect {
             throw e;
 
         } finally {
-            Log logDate = buildLog(joinPoint, logging, request, statusCode, message, targetId);
+            Log logDate = buildLog(logging, request, statusCode, message, targetId);
             logService.saveLog(logDate);
         }
     }
 
-    private Log buildLog(ProceedingJoinPoint joinPoint, Logging logging, HttpServletRequest request,
+    private Log buildLog(Logging logging, HttpServletRequest request,
                          int statusCode, String message, Long targetId) {
-        //Long userId = extractUserId();
+        Long userId = extractUserId(request);
         String uri = request.getRequestURI();
         TargetType targetType = extractTargetType(uri);
         RequestMethod requestMethod = extractRequestMethod(request);
         ActivityType activityType = logging.activityType();
 
         return Log.builder()
-                //.userId(userId)
+                .userId(userId)
                 .targetType(targetType)
                 .targetId(targetId)
                 .requestMethod(requestMethod)
@@ -92,11 +94,19 @@ public class LoggingAspect {
                 .build();
     }
 
-    private Long extractUserId() {
+    private Long extractUserId(HttpServletRequest request) {
 //        jwt util을 활용하여 userId 추출
-//        Claims claims = jwtUtil.extractClaims(token);
-//        Long userId = claims.get("userId", Long.class);
-        return null;
+        String bearerToken = request.getHeader("Authorization");
+
+        if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+            return null;
+        }
+
+        String token = bearerToken.substring(7);
+
+        Claims claims = jwtUtil.extractClaims(token);
+
+        return claims.get("userId", Long.class);
     }
 
     private Long extractTargetId(Object result, ProceedingJoinPoint joinPoint, HttpServletRequest request) {
