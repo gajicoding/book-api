@@ -17,7 +17,7 @@ public class BookKeywordService {
 
 
     public void save(String keyword, Long userId) {
-        User user = userService.getUserById(userId);
+        User user = userService.findById(userId);
         BookKeyword bookKeyword = new BookKeyword(keyword , user);
         bookKeywordRepository.save(bookKeyword);
 

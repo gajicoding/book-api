@@ -19,7 +19,7 @@ public class BookViewService {
 
     @Transactional
     public void viewCount(Book book, Long userId) {
-        User user = userService.getUserById(userId);
+        User user = userService.findById(userId);
         BookView bookView = new BookView(book, user);
         bookViewRepository.save(bookView);
     }
