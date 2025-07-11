@@ -44,10 +44,6 @@ public class Book extends BaseEntity {
     }
 
 
-    public void updateUser(User user) {
-        this.user = user;
-    }
-
     public void updatePost(BookUpdateRequestDto requestDto) { // dto로 들어온 값만 수정하고 그 외의 값은 유지
         if (requestDto.getTitle() != null) this.title = requestDto.getTitle();
         if (requestDto.getAuthor() != null) this.author = requestDto.getAuthor();

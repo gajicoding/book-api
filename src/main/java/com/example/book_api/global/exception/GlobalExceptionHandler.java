@@ -58,6 +58,7 @@ public class GlobalExceptionHandler {
         return ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "데이터 접근 오류가 발생했습니다.");
     }
 
+    // vaildation 오류
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Object>> handleValidationExceptions(MethodArgumentNotValidException e) {
         Map<String, String> errors = e.getBindingResult().getFieldErrors().stream()
@@ -70,6 +71,7 @@ public class GlobalExceptionHandler {
         ApiResponse<Object> response = new ApiResponse<>("입력값이 올바르지 않습니다", errors);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
 
     // 예상치 못한 전체 예외 (최후의 보루)
     @ExceptionHandler(Exception.class)

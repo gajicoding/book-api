@@ -1,7 +1,8 @@
 package com.example.book_api.domain.book.controller;
 
 import com.example.book_api.domain.book.dto.BookResponseDto;
-import com.example.book_api.domain.book.dto.BookRegistResquestDto;
+import com.example.book_api.domain.book.dto.BookRegistRequestDto;
+import com.example.book_api.domain.book.dto.BookTrendResponseDto;
 import com.example.book_api.domain.book.dto.BookUpdateRequestDto;
 import com.example.book_api.domain.book.service.BookService;
 import com.example.book_api.global.dto.ApiResponse;
@@ -26,7 +27,7 @@ public class BookController {
     // 책 등록
     @PostMapping("/books")
     public ResponseEntity<ApiResponse<BookResponseDto>> regist(
-            @RequestBody @Valid BookRegistResquestDto resquestDto) {
+            @RequestBody @Valid BookRegistRequestDto resquestDto) {
 
         return ApiResponse.success(HttpStatus.OK, "책이 등록되었습니다.", bookService.regist(resquestDto));
     }
@@ -44,9 +45,9 @@ public class BookController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
-        Page<BookResponseDto> pageAll = bookService.findAll(page, size, keyword);
+
         return ApiResponse.success(
-                HttpStatus.OK, "성공적으로 조회되었습니다.", PagedResponse.toPagedResponse(pageAll)
+                HttpStatus.OK, "성공적으로 조회되었습니다.", bookService.findAll(page, size, keyword)
         );
     }
 
@@ -59,6 +60,12 @@ public class BookController {
         return ApiResponse.success(
                 HttpStatus.OK,"성공적으로 조회되었습니다.", bookService.findAllByCursor(cursor, size)
         );
+    }
+
+    //인기keyword 검색
+    @GetMapping("/books/trend")
+    public ResponseEntity<ApiResponse<List<BookTrendResponseDto>>> trend() {
+        return ApiResponse.success(HttpStatus.OK,"인기 keyword 검색이 완료되었습니다.", bookService.findKeyword());
     }
 
     // 책 수정

@@ -1,7 +1,8 @@
 package com.example.book_api.domain.book.service;
 
 import com.example.book_api.domain.book.dto.BookResponseDto;
-import com.example.book_api.domain.book.dto.BookRegistResquestDto;
+import com.example.book_api.domain.book.dto.BookRegistRequestDto;
+import com.example.book_api.domain.book.dto.BookTrendResponseDto;
 import com.example.book_api.domain.book.dto.BookUpdateRequestDto;
 import com.example.book_api.domain.book.entity.Book;
 import com.example.book_api.domain.book.enums.AgeGroup;
@@ -10,6 +11,7 @@ import com.example.book_api.domain.book.exception.NotFoundException;
 import com.example.book_api.domain.book.repository.BookRepository;
 import com.example.book_api.domain.book.repository.QBookRepository;
 import com.example.book_api.domain.book.validation.BookValidator;
+import com.example.book_api.global.dto.PagedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -27,48 +30,50 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final BookViewService bookViewService;
+    private final BookKeywordService bookKeywordService;
     private final QBookRepository qBookRepository;
     private final BookValidator bookValidator;
 
     // 책 등록
-    public BookResponseDto regist(BookRegistResquestDto resquestDto) {
+    public BookResponseDto regist(BookRegistRequestDto resquestDto) {
         Book newBook = resquestDto.toEntity();
         Book regist = bookRepository.save(newBook);
         return new BookResponseDto(regist);
     }
 
     // 책 단건 조회
+    @Transactional
     public BookResponseDto find(Long id) {
-        Book byId = getBookById(id);
-        return new BookResponseDto(byId);
+        Book book = getBookById(id);
+        bookViewService.viewCount(book, 1L); // 토큰 들어오면 1L 바꾸기
+        return new BookResponseDto(book);
     }
 
     // 책 전체 조회 page, size 방식
-    public Page<BookResponseDto> findAll(int page, int size, String keyword) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
+    public PagedResponse<BookResponseDto> findAll(int page, int size, String keyword) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "id");
         Page<Book> books;
         if (keyword == null || keyword.trim().isEmpty()) {
             books = bookRepository.findAll(pageable);
         } else {
+
             books = qBookRepository.searchAllFields(keyword, pageable);
+            bookKeywordService.save(keyword, 1L); // 얘도
         }
 
-        return books.map(book -> new BookResponseDto(
-                book.getId(),
-                book.getTitle(),
-                book.getAuthor(),
-                book.getPublisher(),
-                book.getPublicationYear(),
-                book.getIsbn(),
-                book.getCategory()
-        ));
+
+        return PagedResponse.toPagedResponse(books.map(BookResponseDto::new));
     }
 
     // 책 cursor 방식으로 조회
     public List<BookResponseDto> findAllByCursor(Long cursor, Long size) {
         return qBookRepository.findAllByCursor(cursor, size).stream().map(BookResponseDto::new).toList();
     }
-
+    // 인기 키워드 조회
+    public List<BookTrendResponseDto> findKeyword() {
+        return qBookRepository.findTrend();
+    }
     // 책 수정
     public BookResponseDto update(Long id, BookUpdateRequestDto requestDto) {
         Book findBook = getBookById(id);
