@@ -27,4 +27,12 @@ public class CachedBookService {
     public List<BookResponseDto> getTopBookByUserAgeCached(String ageGroup) {
         return bookService.getTopBookByUserAge(ageGroup);
     }
+
+    // Book 검색:
+    // Qrepository 쿼리
+    // keyword 가 인기 keyword 목록에 있는지 확인
+    // 있으면 -> 캐시적용
+    // 없으면 -> service, repository , DB 참조
+
+    // 페이징 모두 적용
 }
