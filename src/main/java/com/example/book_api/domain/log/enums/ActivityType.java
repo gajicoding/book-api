@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum ActivityType {
+    EXCEPTION("예외 발생"),
     USER_REGISTERED("회원가입"),
     USER_LOG_IN("로그인"),
     USER_ROLE_UPDATED("유저 권한 수정"),

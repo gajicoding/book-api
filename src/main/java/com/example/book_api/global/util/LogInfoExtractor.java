@@ -25,7 +25,6 @@ public class LogInfoExtractor {
 
     private static final List<String> ID_FIELD_NAMES = List.of("id", "commentId", "bookId", "userId", "ratingId");
 
-
     public HttpServletRequest getCurrentRequest() {
         return ((ServletRequestAttributes) Objects.requireNonNull (RequestContextHolder.getRequestAttributes())).getRequest();
     }
@@ -108,24 +107,20 @@ public class LogInfoExtractor {
     }
 
     public int extractStatusCode(Object result) {
-        log.warn("extractStatusCode 호출, result 타입: {}", result != null ? result.getClass().getName() : "null");
-
 
         if (result instanceof ResponseEntity<?> responseEntity) {
             int status = responseEntity.getStatusCode().value();
-            log.warn("ResponseEntity 발견, statusCode: {}", status);
             return status;
 
         }
-        log.warn("ResponseEntity가 아닌 반환값입니다. 기본 statusCode 500 사용");
-        return 200;
+
+        return 500;
     }
 
     public RequestMethod extractRequestMethod(HttpServletRequest request) {
         try {
             return RequestMethod.valueOf(request.getMethod());
         } catch (IllegalArgumentException e) {
-            log.error("request method 추출 실패");
             return null;
         }
     }
@@ -144,6 +139,19 @@ public class LogInfoExtractor {
         if (uri.matches(".*/users.*")) return TargetType.USER;
         if (uri.matches(".*/auth.*")) return TargetType.USER;
 
+        return null;
+    }
+
+    public static String extractMessageFromResponseBody(Object responseBody) {
+        if (responseBody == null) return null;
+        try {
+            Field messageField = responseBody.getClass().getDeclaredField("message");
+            messageField.setAccessible(true);
+            Object messageObj = messageField.get(responseBody);
+            if (messageObj instanceof String msg) return msg;
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            log.warn("Failed to extract message from response body", e);
+        }
         return null;
     }
 }
