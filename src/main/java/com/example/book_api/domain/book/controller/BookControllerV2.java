@@ -1,7 +1,7 @@
 package com.example.book_api.domain.book.controller;
 
 import com.example.book_api.domain.book.dto.BookResponseDto;
-import com.example.book_api.domain.book.service.CachedBoardService;
+import com.example.book_api.domain.book.service.CachedBookService;
 import com.example.book_api.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
