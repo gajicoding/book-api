@@ -1,6 +1,5 @@
 package com.example.book_api.global.config;
 
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +16,7 @@ public class JwtFilterConfig {
         FilterRegistrationBean<JwtFilter> registrationBean = new FilterRegistrationBean<>();
 
         registrationBean.setFilter(new JwtFilter(jwtUtil));
-        registrationBean.addUrlPatterns("/api/v1/**");
+        registrationBean.addUrlPatterns("/api/v1/*");
         return registrationBean;
     }
 }
