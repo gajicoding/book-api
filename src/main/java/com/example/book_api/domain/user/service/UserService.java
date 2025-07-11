@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -87,4 +86,8 @@ public class UserService {
                 () -> new UserException("가입되지 않은 이메일입니다."));
     }
 
+    public User findById(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                ()-> new NotFoundUserException("해당 id로 유저을 찾을 수 없습니다. 다른 id를 입력해주세요!"));
+    }
 }

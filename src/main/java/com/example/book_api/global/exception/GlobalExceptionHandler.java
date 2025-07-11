@@ -9,8 +9,13 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -51,6 +56,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleDataAccessException(DataAccessException ex) {
         log.error("데이터 접근 실패: {}", ex.getMessage(), ex);
         return ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "데이터 접근 오류가 발생했습니다.");
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Object>> handleValidationExceptions(MethodArgumentNotValidException e) {
+        Map<String, String> errors = e.getBindingResult().getFieldErrors().stream()
+                .collect(Collectors.toMap(
+                        FieldError::getField,
+                        FieldError::getDefaultMessage,
+                        (exsiting, replacement) -> exsiting
+                ));
+
+        ApiResponse<Object> response = new ApiResponse<>("입력값이 올바르지 않습니다", errors);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     // 예상치 못한 전체 예외 (최후의 보루)
