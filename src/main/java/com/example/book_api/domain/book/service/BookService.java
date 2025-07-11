@@ -11,6 +11,7 @@ import com.example.book_api.domain.book.exception.NotFoundException;
 import com.example.book_api.domain.book.repository.BookRepository;
 import com.example.book_api.domain.book.repository.QBookRepository;
 import com.example.book_api.domain.book.validation.BookValidator;
+import com.example.book_api.global.dto.PagedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,7 +51,7 @@ public class BookService {
     }
 
     // 책 전체 조회 page, size 방식
-    public Page<BookResponseDto> findAll(int page, int size, String keyword) {
+    public PagedResponse<BookResponseDto> findAll(int page, int size, String keyword) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "id");
         Page<Book> books;
         if (keyword == null || keyword.trim().isEmpty()) {
@@ -61,15 +62,8 @@ public class BookService {
             bookKeywordService.save(keyword, 1L); // 얘도
         }
 
-        return books.map(book -> new BookResponseDto(
-                book.getId(),
-                book.getTitle(),
-                book.getAuthor(),
-                book.getPublisher(),
-                book.getPublicationYear(),
-                book.getIsbn(),
-                book.getCategory()
-        ));
+
+        return PagedResponse.toPagedResponse(books.map(BookResponseDto::new));
     }
 
     // 책 cursor 방식으로 조회

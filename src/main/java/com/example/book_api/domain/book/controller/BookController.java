@@ -45,9 +45,9 @@ public class BookController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
-        Page<BookResponseDto> pageAll = bookService.findAll(page, size, keyword);
+
         return ApiResponse.success(
-                HttpStatus.OK, "성공적으로 조회되었습니다.", PagedResponse.toPagedResponse(pageAll)
+                HttpStatus.OK, "성공적으로 조회되었습니다.", bookService.findAll(page, size, keyword)
         );
     }
 
