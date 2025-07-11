@@ -24,7 +24,7 @@ public class CommentController {
     @PostMapping("/books/{bookId}/comments")
     public ResponseEntity<ApiResponse<CommentResponseDto>> create(
             @PathVariable Long bookId,
-            @RequestBody @Validated CommentRequestDto request,      // TODO Validated Exception 처리
+            @RequestBody @Validated CommentRequestDto request,
             @Auth AuthUser authUser
             ) {
         CommentResponseDto response = commentService.create(authUser.getId(), bookId, request);
