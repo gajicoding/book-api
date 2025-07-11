@@ -6,10 +6,11 @@ import com.example.book_api.domain.rating.dto.response.MyRatingResponse;
 import com.example.book_api.domain.rating.dto.response.RatingDistributionResponse;
 import com.example.book_api.domain.rating.dto.response.TopRatedBookResponse;
 import com.example.book_api.domain.rating.service.RatingService;
+import com.example.book_api.domain.auth.annotation.Auth;
+import com.example.book_api.domain.auth.dto.AuthUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
 
@@ -23,28 +24,28 @@ public class RatingController {
     @PostMapping("/books/{bookId}/ratings")
     public void createRating(@PathVariable Long bookId,
                              @Valid @RequestBody RatingRequestDto request,
-                             @AuthenticationPrincipal CustomUserDetails userDetails) {
-        ratingService.createRating(bookId, request, userDetails.getUserId());
+                             @Auth AuthUser authUser) {
+        ratingService.createRating(bookId, request, authUser.getId());
     }
 
     @PatchMapping("/books/{bookId}/ratings")
     public void updateRating(@PathVariable Long bookId,
                              @Valid @RequestBody RatingRequestDto request,
-                             @AuthenticationPrincipal CustomUserDetails userDetails) {
-        ratingService.updateRating(bookId, request, userDetails.getUserId());
+                             @Auth AuthUser authUser) {
+        ratingService.updateRating(bookId, request, authUser.getId());
     }
 
     @DeleteMapping("/books/{bookId}/ratings")
     public void deleteRating(@PathVariable Long bookId,
-                             @AuthenticationPrincipal CustomUserDetails userDetails) {
-        ratingService.deleteRating(bookId, userDetails.getUserId());
+                             @Auth AuthUser authUser) {
+        ratingService.deleteRating(bookId, authUser.getId());
     }
 
     //내가 남긴 평점 조회
     @GetMapping("/books/{bookId}/ratings/me")
     public MyRatingResponse getMyRating(@PathVariable Long bookId,
-                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
-        return ratingService.getMyRating(bookId, userDetails.getUserId());
+                                        @Auth AuthUser authUser) {
+        return ratingService.getMyRating(bookId, authUser.getId());
     }
 
     //책 평점 평균 조회
