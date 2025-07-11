@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: book-api
+
+  datasource:
+    url: ${DB_URL}?rewriteBatchedStatements=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
+  mvc:
+    servlet:
+      path: /api
+
+
+server:
+  error:
+    include-message: always
+
+jwt:
+  secret:
+    key: ${SECRET_KEY}
+
+
+logging:
+  level:
+    org.springframework.jdbc.core: DEBUG

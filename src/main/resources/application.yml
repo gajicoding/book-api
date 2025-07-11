@@ -3,15 +3,18 @@ spring:
     name: book-api
 
   datasource:
-    url: ${DB_URL}
+    url: ${DB_URL}?rewriteBatchedStatements=true
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 10
 
   jpa:
     show-sql: true
     open-in-view: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
   data:
     redis:
@@ -30,3 +33,7 @@ server:
 jwt:
   secret:
     key: ${SECRET_KEY}
+
+logging:
+  level:
+    org.springframework.jdbc.core: DEBUG

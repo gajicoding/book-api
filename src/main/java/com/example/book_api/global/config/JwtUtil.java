@@ -1,6 +1,5 @@
 package com.example.book_api.global.config;
 
-import com.example.book_api.domain.auth.exception.InvalidRequestException;
 import com.example.book_api.domain.auth.exception.NotFoundException;
 import com.example.book_api.domain.user.entity.User;
 import io.jsonwebtoken.Claims;

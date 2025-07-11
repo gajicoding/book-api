@@ -36,7 +36,7 @@ public class AuthService {
 
         User savedUser = userService.saveUser(newUser);
 
-        return new SignUpResponseDto(savedUser.getEmail(), savedUser.getName(), savedUser.getBirth());
+        return new SignUpResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getName(), savedUser.getBirth());
     }
 
     @Transactional
@@ -47,7 +47,7 @@ public class AuthService {
             throw new AuthException("잘못된 비밀번호입니다.");
         }
 
-        return new SignInResponseDto(user.getEmail(), user.getName(), user.getBirth(), user.getRole());
+        return new SignInResponseDto(user.getId(), user.getEmail(), user.getName(), user.getBirth(), user.getRole());
     }
 
 

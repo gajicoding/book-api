@@ -2,8 +2,10 @@ package com.example.book_api.domain.user.controller;
 
 import com.example.book_api.domain.auth.annotation.Auth;
 import com.example.book_api.domain.auth.dto.AuthUser;
+import com.example.book_api.domain.log.enums.ActivityType;
 import com.example.book_api.domain.user.dto.*;
 import com.example.book_api.domain.user.service.UserService;
+import com.example.book_api.global.annotation.Logging;
 import com.example.book_api.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ public class UserController {
         return ApiResponse.success(HttpStatus.OK, "조회를 완료했습니다.", findUserResponseDto);
     }
 
+    @Logging(activityType = ActivityType.USER_ROLE_UPDATED)
     @PatchMapping("/users/{id}")
     public ResponseEntity<ApiResponse<ChangeUserRoleResponseDto>> changeUserRole(
             @PathVariable("id") Long id,
@@ -32,6 +35,7 @@ public class UserController {
         return ApiResponse.success(HttpStatus.OK, "권한 변경이 완료되었습니다.", changeUserRoleResponseDto);
     }
 
+    @Logging(activityType = ActivityType.USER_PASSWORD_UPDATED)
     @PatchMapping("/users/password")
     public ResponseEntity<ApiResponse<ChangePasswordResponseDto>> changePassword(
             @Auth AuthUser authUser,
@@ -41,6 +45,7 @@ public class UserController {
         return ApiResponse.success(HttpStatus.OK, "비밀번호 변경이 완료되었습니다.", changePasswordResponseDto);
     }
 
+    @Logging(activityType = ActivityType.USER_DELETED)
     @DeleteMapping("/users/withdraw")
     public ResponseEntity<ApiResponse<Object>> deleteUser(
             @Auth AuthUser authUser,
