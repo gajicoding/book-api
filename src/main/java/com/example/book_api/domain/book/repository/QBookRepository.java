@@ -32,7 +32,7 @@ public class QBookRepository {
     public List<Book> findTop10Books() {
         return queryFactory.select(book)
                 .from(bookView)
-                .join(bookView.book, book)
+                .rightJoin(bookView.book, book)
                 .groupBy(book)
                 .orderBy(bookView.count().desc())
                 .limit(10)
@@ -42,7 +42,7 @@ public class QBookRepository {
     public List<Book> findTop10BooksByCategory(CategoryEnum categoryEnum) {
         return queryFactory.select(book)
                 .from(bookView)
-                .join(bookView.book, book)
+                .rightJoin(bookView.book, book)
                 .groupBy(book)
                 .where(book.category.eq(categoryEnum))
                 .orderBy(bookView.count().desc())
@@ -61,7 +61,7 @@ public class QBookRepository {
 
         return queryFactory.select(book)
                 .from(bookView)
-                .join(bookView.book, book)
+                .rightJoin(bookView.book, book)
                 .join(bookView.user, user)
                 .where(user.birth.between(minBirth, maxBirth))
                 .groupBy(book)

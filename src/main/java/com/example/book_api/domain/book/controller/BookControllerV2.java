@@ -1,7 +1,6 @@
 package com.example.book_api.domain.book.controller;
 
 import com.example.book_api.domain.book.dto.BookResponseDto;
-import com.example.book_api.domain.book.dto.BookTrendResponseDto;
 import com.example.book_api.domain.book.service.CachedBoardService;
 import com.example.book_api.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +17,13 @@ import java.util.List;
 @RequestMapping("/v2")
 @RequiredArgsConstructor
 public class BookControllerV2 {
-    private final CachedBoardService cachedBoardService;
+    private final CachedBookService cachedBookService;
 
     // 책 전체 top 10
     @GetMapping("/books/top")
     public ResponseEntity<ApiResponse<List<BookResponseDto>>> getTopBooks() {
         return ApiResponse.success(
-                HttpStatus.OK, "책 전체 top 10 조회가 완료되었습니다.", cachedBoardService.getTopBooksCached()
+                HttpStatus.OK, "책 전체 top 10 조회가 완료되었습니다.", cachedBookService.getTopBooksCached()
         );
     }
 
@@ -34,7 +33,7 @@ public class BookControllerV2 {
             @RequestParam(defaultValue = "GENERAL") String category
     ) {
         return ApiResponse.success(
-                HttpStatus.OK, "책 카테고리별 top 10 조회가 완료되었습니다.", cachedBoardService.getTopBookByCategoryCached(category)
+                HttpStatus.OK, "책 카테고리별 top 10 조회가 완료되었습니다.", cachedBookService.getTopBookByCategoryCached(category)
         );
     }
 
@@ -44,7 +43,7 @@ public class BookControllerV2 {
             @RequestParam(defaultValue = "TEENS_EARLY") String ageGroup
     ) {
         return ApiResponse.success(
-                HttpStatus.OK, "책 나이대 별 top 10 조회가 완료되었습니다.", cachedBoardService.getTopBookByUserAgeCached(ageGroup)
+                HttpStatus.OK, "책 나이대 별 top 10 조회가 완료되었습니다.", cachedBookService.getTopBookByUserAgeCached(ageGroup)
         );
     }
 

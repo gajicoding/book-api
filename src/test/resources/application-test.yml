@@ -6,9 +6,6 @@ spring:
     url: ${DB_URL}?rewriteBatchedStatements=true
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-    hikari:
-      maximum-pool-size: 30
-      minimum-idle: 10
 
   jpa:
     show-sql: true
@@ -33,6 +30,7 @@ server:
 jwt:
   secret:
     key: ${SECRET_KEY}
+
 
 logging:
   level:
