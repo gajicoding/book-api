@@ -26,13 +26,11 @@ import java.time.LocalDateTime;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final BookService bookService;
-    // TODO 서비스로 변경하기
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Transactional
     public CommentResponseDto create(Long userId, Long bookId, CommentRequestDto request) {
-        // TODO 수정
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserException("해당 유저는 존재하지 않습니다."));
+        User user = userService.findById(userId);
         Book book = bookService.getBookById(bookId);
 
         Comment comment = new Comment(request.getContent(), user, book);
