@@ -51,6 +51,12 @@ dependencies {
 	testRuntimeOnly 'com.mysql:mysql-connector-j'
 
 	implementation 'at.favre.lib:bcrypt:0.10.2'
+
+	// cache
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {
