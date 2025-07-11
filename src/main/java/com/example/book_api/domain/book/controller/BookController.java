@@ -4,6 +4,8 @@ import com.example.book_api.domain.book.dto.BookResponseDto;
 import com.example.book_api.domain.book.dto.BookRegistResquestDto;
 import com.example.book_api.domain.book.dto.BookUpdateRequestDto;
 import com.example.book_api.domain.book.service.BookService;
+import com.example.book_api.domain.log.enums.ActivityType;
+import com.example.book_api.global.annotation.Logging;
 import com.example.book_api.global.dto.ApiResponse;
 import com.example.book_api.global.dto.PagedResponse;
 import jakarta.validation.Valid;
@@ -24,6 +26,7 @@ public class BookController {
     private final BookService bookService;
 
     // 책 등록
+    @Logging(activityType = ActivityType.BOOK_CREATED)
     @PostMapping("/books")
     public ResponseEntity<ApiResponse<BookResponseDto>> regist(
             @RequestBody @Valid BookRegistResquestDto resquestDto) {
@@ -62,6 +65,7 @@ public class BookController {
     }
 
     // 책 수정
+    @Logging(activityType = ActivityType.BOOK_UPDATED)
     @PatchMapping("/books/{id}")
     public ResponseEntity<ApiResponse<BookResponseDto>> update(
             @PathVariable Long id,
@@ -73,6 +77,7 @@ public class BookController {
     }
 
     // 책 삭제
+    @Logging(activityType = ActivityType.BOOK_DELETED)
     @DeleteMapping("/books/{id}")
     public ResponseEntity<ApiResponse<LocalDateTime>> delete(
             @PathVariable Long id
