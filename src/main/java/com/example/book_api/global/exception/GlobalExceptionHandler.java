@@ -50,10 +50,9 @@ public class GlobalExceptionHandler {
         ApiResponse<Object> response = new ApiResponse<>("입력값이 올바르지 않습니다", errors);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
-  
+
     @ExceptionHandler(CommentException.class)
     public ResponseEntity<ApiResponse<Void>> CommentException(CommentException ex) {
-        return ApiResponse.error(HttpStatus.BAD_REQUEST, ex.getMessage());
-
+        return ApiResponse.error(ex.getStatus(), ex.getMessage());
     }
 }

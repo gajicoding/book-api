@@ -9,12 +9,13 @@ public class CommentResponseDto {
     private String content;
     private Long userId;
     private Long bookId;
+    private String userName;
 
-    public CommentResponseDto(Long id, String content, Long userId, Long bookId) {
+    public CommentResponseDto(Long id, String content, Long userId, String userName, Long bookId) {
         this.id = id;
         this.content = content;
         this.userId = userId;
+        this.userName = userName;
         this.bookId = bookId;
-
     }
 }

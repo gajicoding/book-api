@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 public class CommentController {
     private final CommentService commentService;
 
-    // create
     @PostMapping("/books/{bookId}/comments")
     public ResponseEntity<ApiResponse<CommentResponseDto>> create(
             @PathVariable Long bookId,
@@ -29,7 +28,6 @@ public class CommentController {
             @Auth AuthUser authUser
             ) {
         CommentResponseDto response = commentService.create(authUser.getId(), bookId, request);
-
         return ApiResponse.success(HttpStatus.CREATED, "댓글이 생성되었습니다.", response);
     }
 
@@ -62,8 +60,6 @@ public class CommentController {
         return ApiResponse.success(HttpStatus.OK, "댓글이 조회되었습니다", responses);
     }
 
-
-    // update
     @PatchMapping("/comments/{id}")
     public ResponseEntity<ApiResponse<CommentResponseDto>> update(
             @PathVariable Long id,
@@ -75,7 +71,6 @@ public class CommentController {
         return ApiResponse.success(HttpStatus.OK, "댓글이 수정되었습니다.", response);
     }
 
-    // delete
     @DeleteMapping("/comments/{id}")
     public ResponseEntity<ApiResponse<LocalDateTime>> delete(
             @PathVariable Long id,
