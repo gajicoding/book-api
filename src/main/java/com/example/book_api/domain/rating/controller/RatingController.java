@@ -20,21 +20,21 @@ public class RatingController {
 
     private final RatingService ratingService;
 
-    @PostMapping
+    @PostMapping("/books/{bookId}/ratings")
     public void createRating(@PathVariable Long bookId,
                              @Valid @RequestBody RatingRequestDto request,
                              @AuthenticationPrincipal CustomUserDetails userDetails) {
         ratingService.createRating(bookId, request, userDetails.getUserId());
     }
 
-    @PatchMapping
+    @PatchMapping("/books/{bookId}/ratings")
     public void updateRating(@PathVariable Long bookId,
                              @Valid @RequestBody RatingRequestDto request,
                              @AuthenticationPrincipal CustomUserDetails userDetails) {
         ratingService.updateRating(bookId, request, userDetails.getUserId());
     }
 
-    @DeleteMapping
+    @DeleteMapping("/books/{bookId}/ratings")
     public void deleteRating(@PathVariable Long bookId,
                              @AuthenticationPrincipal CustomUserDetails userDetails) {
         ratingService.deleteRating(bookId, userDetails.getUserId());
