@@ -45,4 +45,14 @@ public class RedisConfig {
                 .cacheDefaults(cacheConfiguration)
                 .build();
     }
+
+    @Bean
+    public RedisCacheConfiguration redisCacheConfiguration() {
+        return RedisCacheConfiguration.defaultCacheConfig()
+                .serializeValuesWith(
+                        RedisSerializationContext.SerializationPair.fromSerializer(
+                                new GenericJackson2JsonRedisSerializer()
+                        )
+                );
+    }
 }

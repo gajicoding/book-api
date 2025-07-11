@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,6 +17,7 @@ public class PagedResponse<T> {
     private int totalPages;
     private int size;
     private long number;
+
 
     public static <T> PagedResponse<T> toPagedResponse(Page<T> page) {
         return new PagedResponse<>(
