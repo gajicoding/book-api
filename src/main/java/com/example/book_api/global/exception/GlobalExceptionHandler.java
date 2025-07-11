@@ -33,6 +33,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CommentException.class)
     public ResponseEntity<ApiResponse<Void>> CommentException(CommentException ex) {
-        return ApiResponse.error(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return ApiResponse.error(ex.getStatus(), ex.getMessage());
     }
 }
