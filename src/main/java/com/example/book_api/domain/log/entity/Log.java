@@ -6,10 +6,7 @@ import com.example.book_api.domain.log.enums.TargetType;
 import com.example.book_api.domain.user.entity.User;
 import com.example.book_api.domain.user.service.UserService;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -17,6 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Table(name = "logs")
+@ToString
 @NoArgsConstructor
 public class Log {
     @Id
