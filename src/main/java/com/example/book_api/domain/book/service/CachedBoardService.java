@@ -1,6 +1,7 @@
 package com.example.book_api.domain.book.service;
 
 import com.example.book_api.domain.book.dto.BookResponseDto;
+import com.example.book_api.domain.book.dto.BookTrendResponseDto;
 import com.example.book_api.domain.book.validation.BookValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -33,4 +34,6 @@ public class CachedBoardService {
 
         return bookService.getTopBookByUserAge(ageGroup);
     }
+
+
 }

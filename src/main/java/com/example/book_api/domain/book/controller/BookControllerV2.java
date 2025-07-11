@@ -1,6 +1,7 @@
 package com.example.book_api.domain.book.controller;
 
 import com.example.book_api.domain.book.dto.BookResponseDto;
+import com.example.book_api.domain.book.dto.BookTrendResponseDto;
 import com.example.book_api.domain.book.service.CachedBoardService;
 import com.example.book_api.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -46,4 +47,7 @@ public class BookControllerV2 {
                 HttpStatus.OK, "책 나이대 별 top 10 조회가 완료되었습니다.", cachedBoardService.getTopBookByUserAgeCached(ageGroup)
         );
     }
+
+    // 책전체 조회
+
 }

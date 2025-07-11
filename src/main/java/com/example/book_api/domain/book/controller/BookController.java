@@ -65,7 +65,7 @@ public class BookController {
     //인기keyword 검색
     @GetMapping("/books/trend")
     public ResponseEntity<ApiResponse<List<BookTrendResponseDto>>> trend() {
-        return ApiResponse.success(HttpStatus.OK,"성공", bookService.findKeyword());
+        return ApiResponse.success(HttpStatus.OK,"인기 keyword 검색이 완료되었습니다.", bookService.findKeyword());
     }
 
     // 책 수정
