@@ -1,22 +1,26 @@
 package com.example.book_api.domain.book.service;
 
 import com.example.book_api.domain.book.dto.BookResponseDto;
-import com.example.book_api.domain.book.validation.BookValidator;
 import com.example.book_api.global.dto.PagedResponse;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class CachedBookService {
 
     private final BookService bookService;
-    private final BookValidator bookValidator;
+
+    private final ObjectMapper objectMapper;
+    private final RedisTemplate<String, PagedResponse<BookResponseDto>> redisTemplate;
+
 
     @Cacheable(value = "bookTop", key = "'all'")
     public List<BookResponseDto> getTopBooksCached() {
@@ -33,15 +37,30 @@ public class CachedBookService {
         return bookService.getTopBookByUserAge(ageGroup);
     }
 
-    @Cacheable(value = "books", key = "#keyword + #page + ',' + #size")
-    public PagedResponse<BookResponseDto> findAllCached(int page, int size, String keyword) {
-        return bookService.findAll(page, size, keyword);
-    }
-
-//    @Cacheable(value = "books", key = "#keyword + '_' + #page + '_' + #size")
-//    public Page<BookResponseDto> findAll(int page, int size, String keyword) {
+//    @Cacheable(value = "books", key = "(#keyword != null ? #keyword : '') + #page + ',' + #size")
+//    public PagedResponse<BookResponseDto> findAllCached(int page, int size, String keyword) {
 //        return bookService.findAll(page, size, keyword);
 //    }
+
+    // 역 직렬화 문제로 수동 캐싱
+    public PagedResponse<BookResponseDto> findAllCached(int page, int size, String keyword) {
+        String key = "bookTop::" + (keyword != null ? keyword : "") + "." + page + "." + size;
+        Object cached = redisTemplate.opsForValue().get(key);
+        PagedResponse<BookResponseDto> cachedResponse = objectMapper.convertValue(
+                cached,
+                new TypeReference<PagedResponse<BookResponseDto>>() {}
+        );
+
+        if (cachedResponse != null) {
+            return cachedResponse;
+        }
+
+        PagedResponse<BookResponseDto> result = bookService.findAll(page, size, keyword);
+        redisTemplate.opsForValue().set(key, result, 30, TimeUnit.MINUTES);
+
+        return result;
+    }
+
 
     // Book 검색:
     // Qrepository 쿼리
