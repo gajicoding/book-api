@@ -1,11 +1,11 @@
 package com.example.book_api.domain.book.controller;
 
 import com.example.book_api.domain.book.dto.BookResponseDto;
+import com.example.book_api.domain.book.service.BookService;
 import com.example.book_api.domain.book.service.CachedBookService;
 import com.example.book_api.global.dto.ApiResponse;
 import com.example.book_api.global.dto.PagedResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookControllerV2 {
     private final CachedBookService cachedBookService;
+    private final BookService bookService;
 
     // 책 전체 top 10
     @GetMapping("/books/top")
@@ -55,8 +56,17 @@ public class BookControllerV2 {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
+
+        PagedResponse<BookResponseDto> result;
+
+        if(bookService.isPopularKeyword(keyword)) {
+            result = cachedBookService.findAllCached(page, size, keyword);
+        } else {
+            result = bookService.findAll(page, size, keyword);
+        }
+
         return ApiResponse.success(
-                HttpStatus.OK, "성공적으로 조회되었습니다.", cachedBookService.findAllCached(page, size, keyword)
+                HttpStatus.OK, "성공적으로 조회되었습니다.", result
         );
     }
 

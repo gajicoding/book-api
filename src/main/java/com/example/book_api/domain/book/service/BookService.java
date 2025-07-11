@@ -5,6 +5,7 @@ import com.example.book_api.domain.book.dto.BookRegistRequestDto;
 import com.example.book_api.domain.book.dto.BookTrendResponseDto;
 import com.example.book_api.domain.book.dto.BookUpdateRequestDto;
 import com.example.book_api.domain.book.entity.Book;
+import com.example.book_api.domain.book.entity.BookKeyword;
 import com.example.book_api.domain.book.enums.AgeGroup;
 import com.example.book_api.domain.book.enums.CategoryEnum;
 import com.example.book_api.domain.book.exception.NotFoundException;
@@ -54,26 +55,40 @@ public class BookService {
     public PagedResponse<BookResponseDto> findAll(int page, int size, String keyword) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "id");
         Page<Book> books;
-        if (keyword == null || keyword.trim().isEmpty()) {
+
+        BookKeyword bookKeyword = saveKeyword(keyword);
+        if(bookKeyword == null) {
             books = bookRepository.findAll(pageable);
         } else {
-
             books = qBookRepository.searchAllFields(keyword, pageable);
-            bookKeywordService.save(keyword, 1L); // 얘도
         }
 
-
         return PagedResponse.toPagedResponse(books.map(BookResponseDto::new));
+    }
+
+    public BookKeyword saveKeyword(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return null;
+        }
+
+        return bookKeywordService.save(keyword, 1L); // TODO: User Token 값으로 변경 필요
+    }
+
+    public boolean isPopularKeyword(String keyword) {
+        return qBookRepository.isPopularKeyword(keyword);
     }
 
     // 책 cursor 방식으로 조회
     public List<BookResponseDto> findAllByCursor(Long cursor, Long size) {
         return qBookRepository.findAllByCursor(cursor, size).stream().map(BookResponseDto::new).toList();
     }
+
     // 인기 키워드 조회
     public List<BookTrendResponseDto> findKeyword() {
         return qBookRepository.findTrend();
     }
+
+
     // 책 수정
     public BookResponseDto update(Long id, BookUpdateRequestDto requestDto) {
         Book findBook = getBookById(id);

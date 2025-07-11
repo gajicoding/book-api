@@ -16,10 +16,9 @@ public class BookKeywordService {
 
 
 
-    public void save(String keyword, Long userId) {
+    public BookKeyword save(String keyword, Long userId) {
         User user = userService.findById(userId);
         BookKeyword bookKeyword = new BookKeyword(keyword , user);
-        bookKeywordRepository.save(bookKeyword);
-
+        return bookKeywordRepository.save(bookKeyword);
     }
 }

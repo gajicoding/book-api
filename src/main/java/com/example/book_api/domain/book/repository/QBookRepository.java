@@ -126,4 +126,18 @@ public class QBookRepository {
                 .limit(10)
                 .fetch();
     }
+
+    public boolean isPopularKeyword(String keyword) {
+        QBookKeyword bookKeyword = QBookKeyword.bookKeyword;
+        List<String> result = queryFactory
+                .select(bookKeyword.keyword)
+                .from(bookKeyword)
+                .groupBy(bookKeyword.keyword)
+                .orderBy(bookKeyword.keyword.count().desc())
+                .limit(10)
+                .fetch();
+
+
+        return result.stream().anyMatch(r->r.equals(keyword));
+    }
 }
