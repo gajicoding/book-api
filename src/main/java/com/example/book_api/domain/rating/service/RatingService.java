@@ -16,12 +16,9 @@ import com.example.book_api.domain.user.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-import static org.springframework.http.HttpStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +31,7 @@ public class RatingService {
     @Transactional
     public void createRating(Long bookId, RatingRequestDto request, Long userId) {
         Book book = bookService.getBookById(bookId);
-        User user = userService.getUserById(userId);
+        User user = userService.findById(userId);
 
         if (ratingRepository.existsByBookAndUser(book, user)) {
             throw new RatingException(RatingErrorCode.DUPLICATE_RATING);
@@ -52,7 +49,7 @@ public class RatingService {
     @Transactional
     public void updateRating(Long bookId, RatingRequestDto request, Long userId) {
         Book book = bookService.getBookById(bookId);
-        User user = userService.getUserById(userId);
+        User user = userService.findById(userId);
 
         Rating rating = ratingRepository.findByBookAndUser(book, user)
                 .orElseThrow(() -> new RatingException(RatingErrorCode.RATING_NOT_FOUND));
@@ -63,7 +60,7 @@ public class RatingService {
     @Transactional
     public void deleteRating(Long bookId, Long userId) {
         Book book = bookService.getBookById(bookId);
-        User user = userService.getUserById(userId);
+        User user = userService.findById(userId);
 
         Rating rating = ratingRepository.findByBookAndUser(book, user)
                 .orElseThrow(() -> new RatingException(RatingErrorCode.RATING_NOT_FOUND));
@@ -74,7 +71,7 @@ public class RatingService {
     //내가 남긴 평점 조회
     public MyRatingResponse getMyRating(Long bookId, Long userId) {
         Book book = bookService.getBookById(bookId);
-        User user = userService.getUserById(userId);
+        User user = userService.findById(userId);
 
         Rating rating = ratingRepository.findByBookAndUser(book, user)
                 .orElseThrow(() -> new RatingException(RatingErrorCode.RATING_NOT_FOUND));

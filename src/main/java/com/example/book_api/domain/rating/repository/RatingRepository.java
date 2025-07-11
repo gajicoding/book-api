@@ -17,6 +17,8 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
 
     Optional<Rating> findByBookAndUser(Book book, User user);
 
+    boolean existsByBookAndUser(Book book, User user);
+
     //평점 계산
     @Query("SELECT AVG(r.score) FROM Rating r WHERE r.book = :book")
     Double findAverageByBook(@Param("book") Book book);
