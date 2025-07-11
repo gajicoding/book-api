@@ -11,18 +11,16 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Table(name = "book_views")
+@Table(name = "book_keyword")
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class BookView {
-
+public class BookKeyword {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "book_id")
-    private Book book;
+    private String keyword;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -32,8 +30,8 @@ public class BookView {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public BookView(Book book, User user) {
-        this.book = book;
+    public BookKeyword(String keyword, User user) {
+        this.keyword = keyword;
         this.user = user;
     }
 }

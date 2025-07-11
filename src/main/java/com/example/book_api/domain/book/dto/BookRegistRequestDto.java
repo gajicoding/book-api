@@ -11,7 +11,7 @@ import java.time.Year;
 
 @RequiredArgsConstructor
 @Getter
-public class BookRegistResquestDto {
+public class BookRegistRequestDto {
 
     @NotNull
     private String title;
