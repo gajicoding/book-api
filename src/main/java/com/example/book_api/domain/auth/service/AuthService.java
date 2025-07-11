@@ -47,9 +47,12 @@ public class AuthService {
             throw new AuthException("잘못된 비밀번호입니다.");
         }
 
-        String token = jwtUtil.createToken(user);
+        return new SignInResponseDto(user.getEmail(), user.getName(), user.getBirth(), user.getRole());
+    }
 
-        return new SignInResponseDto(token);
+
+    public User findUser(String email) {
+        return userService.findByEmail(email);
     }
 
 }

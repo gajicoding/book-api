@@ -2,6 +2,7 @@ package com.example.book_api.global.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -23,5 +24,9 @@ public class ApiResponse<T> {
 
     public static <T> ResponseEntity<ApiResponse<T>> error(HttpStatus code, String message) {
         return ResponseEntity.status(code).body(new ApiResponse<>(message, null));
+    }
+
+    public static <T> ResponseEntity<ApiResponse<T>> success(HttpStatus code, String message, T data, HttpHeaders headers) {
+        return ResponseEntity.status(code).headers(headers).body(new ApiResponse<>(message, data));
     }
 }
