@@ -5,6 +5,8 @@ import com.example.book_api.domain.auth.dto.AuthUser;
 import com.example.book_api.domain.comment.dto.CommentRequestDto;
 import com.example.book_api.domain.comment.dto.CommentResponseDto;
 import com.example.book_api.domain.comment.service.CommentService;
+import com.example.book_api.domain.log.enums.ActivityType;
+import com.example.book_api.global.annotation.Logging;
 import com.example.book_api.global.dto.ApiResponse;
 import com.example.book_api.global.dto.PagedResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class CommentController {
     private final CommentService commentService;
 
     // create
+    @Logging(activityType = ActivityType.COMMENT_CREATED)
     @PostMapping("/books/{bookId}/comments")
     public ResponseEntity<ApiResponse<CommentResponseDto>> create(
             @PathVariable Long bookId,
@@ -64,6 +67,7 @@ public class CommentController {
 
 
     // update
+    @Logging(activityType = ActivityType.COMMENT_UPDATED)
     @PatchMapping("/comments/{id}")
     public ResponseEntity<ApiResponse<CommentResponseDto>> update(
             @PathVariable Long id,
@@ -76,6 +80,7 @@ public class CommentController {
     }
 
     // delete
+    @Logging(activityType = ActivityType.COMMENT_DELETED)
     @DeleteMapping("/comments/{id}")
     public ResponseEntity<ApiResponse<LocalDateTime>> delete(
             @PathVariable Long id,

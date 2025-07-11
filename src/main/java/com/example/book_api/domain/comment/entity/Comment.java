@@ -15,7 +15,7 @@ public class Comment extends BaseEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "contnet", length = 600, nullable = false)
+    @Column(name = "content", length = 600, nullable = false)
     private String content;
 
     @ManyToOne
