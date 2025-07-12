@@ -72,6 +72,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(CommentException.class)
+    public ResponseEntity<ApiResponse<Void>> CommentException(CommentException ex) {
+        return ApiResponse.error(ex.getStatus(), ex.getMessage());
+    }
 
     // 예상치 못한 전체 예외 (최후의 보루)
 //    @ExceptionHandler(Exception.class)

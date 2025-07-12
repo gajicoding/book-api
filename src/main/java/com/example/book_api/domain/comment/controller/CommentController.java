@@ -28,11 +28,10 @@ public class CommentController {
     @PostMapping("/books/{bookId}/comments")
     public ResponseEntity<ApiResponse<CommentResponseDto>> create(
             @PathVariable Long bookId,
-            @RequestBody @Validated CommentRequestDto request,      // TODO Validated globalException 처리
+            @RequestBody @Validated CommentRequestDto request,
             @Auth AuthUser authUser
             ) {
         CommentResponseDto response = commentService.create(authUser.getId(), bookId, request);
-
         return ApiResponse.success(HttpStatus.CREATED, "댓글이 생성되었습니다.", response);
     }
 
