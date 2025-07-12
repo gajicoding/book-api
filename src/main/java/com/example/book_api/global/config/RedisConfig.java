@@ -42,7 +42,7 @@ public class RedisConfig {
         RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeKeysWith(keySerializer)
                 .serializeValuesWith(valueSerializer)
-                .entryTtl(Duration.ofMinutes(10)); // TTL: 10분
+                .entryTtl(Duration.ofMinutes(30)); // TTL: 30분 (유효시간)
 
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(cacheConfiguration)

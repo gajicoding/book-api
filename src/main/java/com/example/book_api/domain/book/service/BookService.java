@@ -14,6 +14,8 @@ import com.example.book_api.domain.book.repository.QBookRepository;
 import com.example.book_api.domain.book.validation.BookValidator;
 import com.example.book_api.global.dto.PagedResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -52,7 +54,10 @@ public class BookService {
     }
 
     // 책 전체 조회 page, size 방식
-    public PagedResponse<BookResponseDto> findAll(int page, int size, String keyword) {
+    @Transactional
+    public PagedResponse<BookResponseDto> findAll(
+            int page, int size, String keyword
+            ) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "id");
         Page<Book> books;
 
@@ -90,6 +95,10 @@ public class BookService {
 
 
     // 책 수정
+    @Caching(evict = {
+            @CacheEvict(value = "bookTop", allEntries = true),
+            @CacheEvict(value = "books", allEntries = true),
+    })
     public BookResponseDto update(Long id, BookUpdateRequestDto requestDto) {
         Book findBook = getBookById(id);
 

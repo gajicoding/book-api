@@ -48,7 +48,7 @@ public class CachedBookService {
     public PagedResponse<BookResponseDto> findAllCached(int page, int size, String keyword) {
 
         // key 조회
-        String key = "bookTop::" + (keyword != null ? keyword : "") + "." + page + "." + size;
+        String key = "books::" + (keyword != null ? keyword : "") + "." + page + "." + size;
         Object cached = redisTemplate.opsForValue().get(key);
         PagedResponse<BookResponseDto> cachedResponse = objectMapper.convertValue(
                 cached,

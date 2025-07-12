@@ -9,7 +9,6 @@ import com.example.book_api.global.dto.ApiResponse;
 import com.example.book_api.global.dto.PagedResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +26,8 @@ public class BookController {
     // 책 등록
     @PostMapping("/books")
     public ResponseEntity<ApiResponse<BookResponseDto>> regist(
-            @RequestBody @Valid BookRegistRequestDto resquestDto) {
+            @RequestBody @Valid BookRegistRequestDto resquestDto
+            ) {
 
         return ApiResponse.success(HttpStatus.OK, "책이 등록되었습니다.", bookService.regist(resquestDto));
     }
