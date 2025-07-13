@@ -42,6 +42,7 @@ public class SecurityConfig {
 
                 // 접근 제어
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/health").permitAll()
                         .requestMatchers("/v1/auth/**").permitAll()
                         .requestMatchers("/v1/admin/**").hasRole(Role.ADMIN.name())
                         .requestMatchers(HttpMethod.POST, "/v1/books/**").hasRole(Role.ADMIN.name())
