@@ -36,10 +36,10 @@ public class GlobalExceptionHandler {
     }
 
     // Comment
-//    @ExceptionHandler(CommentException.class)
-//    public ResponseEntity<ApiResponse<Void>> handleCommentException(CommentException ex) {
-//        return ApiResponse.error(HttpStatus.BAD_REQUEST, ex.getMessage());
-//    }
+    @ExceptionHandler(CommentException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCommentException(CommentException ex) {
+        return ApiResponse.error(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
 
 
     /* Global 예외 */
@@ -70,11 +70,6 @@ public class GlobalExceptionHandler {
 
         ApiResponse<Object> response = new ApiResponse<>("입력값이 올바르지 않습니다", errors);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(CommentException.class)
-    public ResponseEntity<ApiResponse<Void>> CommentException(CommentException ex) {
-        return ApiResponse.error(ex.getStatus(), ex.getMessage());
     }
 
     // 예상치 못한 전체 예외 (최후의 보루)
