@@ -42,12 +42,13 @@ public class BookServiceTest {
         //given 가짜 객체 생성
         BookRegistRequestDto requestDto = mock(BookRegistRequestDto.class);
         Book mockBook = mock(Book.class);
+        AuthUser authUser = new AuthUser(1L, "test@gmail.com", "test", Role.ADMIN);
         //given 메서드 호출시 무조건 mockBook 리턴해라
         when(requestDto.toEntity()).thenReturn(mockBook);
         when(bookRepository.save(mockBook)).thenReturn(mockBook);
 
         //when
-        BookResponseDto responseDto = bookService.regist(requestDto);
+        BookResponseDto responseDto = bookService.regist(requestDto, authUser);
 
         //then
         assertNotNull(responseDto);

@@ -6,6 +6,7 @@ import com.example.book_api.domain.book.enums.AgeGroup;
 import com.example.book_api.domain.book.enums.CategoryEnum;
 import com.example.book_api.domain.book.repository.QBookRepository;
 import com.example.book_api.domain.user.entity.User;
+import com.example.book_api.domain.user.enums.Role;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ public class QBookRepositoryIntegrationTest {
     @BeforeEach
     void setUp() {
 
-        User user = new User("email", "password", "name", LocalDate.parse("2000-01-01"));
+        User user = new User("email", "password", "name", LocalDate.parse("2000-01-01"), Role.USER);
         em.persist(user);
 
         Book book1 = new Book("title1", "author1", "publisher1", Year.parse("2010"), "11111111", CategoryEnum.GENERAL);
