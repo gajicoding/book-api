@@ -12,7 +12,9 @@ import java.time.Year;
 
 @Entity
 @Getter
-@Table(name = "books")
+@Table(name = "books", indexes = {
+        @Index(name = "idx_users_birth", columnList = "birth")
+})
 @NoArgsConstructor
 public class Book extends BaseEntity {
 
