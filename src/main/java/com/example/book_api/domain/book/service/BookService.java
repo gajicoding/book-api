@@ -1,6 +1,5 @@
 package com.example.book_api.domain.book.service;
 
-import com.example.book_api.domain.auth.annotation.Auth;
 import com.example.book_api.domain.auth.dto.AuthUser;
 import com.example.book_api.domain.book.dto.BookResponseDto;
 import com.example.book_api.domain.book.dto.BookRegistRequestDto;
@@ -14,6 +13,8 @@ import com.example.book_api.domain.book.exception.NotFoundException;
 import com.example.book_api.domain.book.repository.BookRepository;
 import com.example.book_api.domain.book.repository.QBookRepository;
 import com.example.book_api.domain.book.validation.BookValidator;
+import com.example.book_api.domain.user.entity.User;
+import com.example.book_api.domain.user.service.UserService;
 import com.example.book_api.global.dto.PagedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -35,14 +36,18 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final UserService userService;
     private final BookViewService bookViewService;
     private final BookKeywordService bookKeywordService;
     private final QBookRepository qBookRepository;
     private final BookValidator bookValidator;
 
     // 책 등록
-    public BookResponseDto regist(BookRegistRequestDto resquestDto) {
+    public BookResponseDto regist(BookRegistRequestDto resquestDto, AuthUser authUser) {
         Book newBook = resquestDto.toEntity();
+        Long userId = authUser.getId();
+        User user = userService.findById(userId);
+        newBook.setUser(user);
         Book regist = bookRepository.save(newBook);
         return new BookResponseDto(regist);
     }

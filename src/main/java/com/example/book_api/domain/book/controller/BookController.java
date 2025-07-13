@@ -31,9 +31,10 @@ public class BookController {
     @Logging(activityType = ActivityType.BOOK_CREATED)
     @PostMapping("/books")
     public ResponseEntity<ApiResponse<BookResponseDto>> regist(
-            @RequestBody @Valid BookRegistRequestDto resquestDto) {
+            @RequestBody @Valid BookRegistRequestDto resquestDto,
+            @AuthenticationPrincipal AuthUser authUser) {
 
-        return ApiResponse.success(HttpStatus.OK, "책이 등록되었습니다.", bookService.regist(resquestDto));
+        return ApiResponse.success(HttpStatus.OK, "책이 등록되었습니다.", bookService.regist(resquestDto, authUser));
     }
 
     // 책 단건 조회
