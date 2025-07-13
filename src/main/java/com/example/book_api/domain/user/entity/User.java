@@ -34,13 +34,14 @@ public class User extends BaseEntity {
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Role role = Role.USER;
+    private Role role;
 
-    public User(String email, String password, String name, LocalDate birth) {
+    public User(String email, String password, String name, LocalDate birth, Role role) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.birth = birth;
+        this.role = role;
     }
 
     public void updateRole(Role role) {
