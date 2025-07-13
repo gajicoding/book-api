@@ -1,5 +1,7 @@
 package com.example.book_api.domain.book.service;
 
+import com.example.book_api.domain.auth.annotation.Auth;
+import com.example.book_api.domain.auth.dto.AuthUser;
 import com.example.book_api.domain.book.dto.BookResponseDto;
 import com.example.book_api.domain.book.dto.BookRegistRequestDto;
 import com.example.book_api.domain.book.dto.BookTrendResponseDto;
@@ -47,21 +49,21 @@ public class BookService {
 
     // 책 단건 조회
     @Transactional
-    public BookResponseDto find(Long id) {
+    public BookResponseDto find(Long id, AuthUser authUser) {
         Book book = getBookById(id);
-        bookViewService.viewCount(book, 1L); // 토큰 들어오면 1L 바꾸기
+        bookViewService.viewCount(book, authUser.getId()); // 토큰 들어오면 1L 바꾸기
         return new BookResponseDto(book);
     }
 
     // 책 전체 조회 page, size 방식
     @Transactional
     public PagedResponse<BookResponseDto> findAll(
-            int page, int size, String keyword
+            int page, int size, String keyword, AuthUser authUser
             ) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "id");
         Page<Book> books;
 
-        BookKeyword bookKeyword = saveKeyword(keyword);
+        BookKeyword bookKeyword = saveKeyword(keyword, authUser);
         if(bookKeyword == null) {
             books = bookRepository.findAll(pageable);
         } else {
@@ -71,12 +73,12 @@ public class BookService {
         return PagedResponse.toPagedResponse(books.map(BookResponseDto::new));
     }
 
-    public BookKeyword saveKeyword(String keyword) {
+    public BookKeyword saveKeyword(String keyword, AuthUser authUser) {
         if (keyword == null || keyword.trim().isEmpty()) {
             return null;
         }
 
-        return bookKeywordService.save(keyword, 1L); // TODO: User Token 값으로 변경 필요
+        return bookKeywordService.save(keyword, authUser.getId());
     }
 
     public boolean isPopularKeyword(String keyword) {

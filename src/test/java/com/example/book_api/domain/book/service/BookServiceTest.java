@@ -1,13 +1,14 @@
 package com.example.book_api.domain.book.service;
 
 
+import com.example.book_api.domain.auth.dto.AuthUser;
 import com.example.book_api.domain.book.dto.BookRegistRequestDto;
 import com.example.book_api.domain.book.dto.BookResponseDto;
 import com.example.book_api.domain.book.entity.Book;
 import com.example.book_api.domain.book.entity.BookKeyword;
-import com.example.book_api.domain.book.enums.CategoryEnum;
 import com.example.book_api.domain.book.repository.BookRepository;
 import com.example.book_api.domain.book.repository.QBookRepository;
+import com.example.book_api.domain.user.enums.Role;
 import com.example.book_api.global.dto.PagedResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,13 +17,8 @@ import org.mockito.Mock;
 
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
-
-import java.time.Year;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
@@ -38,10 +34,6 @@ public class BookServiceTest {
     BookRepository bookRepository;
     @Mock
     QBookRepository qBookRepository;
-    @Mock
-    BookViewService bookViewService;
-    @Mock
-    BookKeywordService bookKeywordService;
     @InjectMocks
     BookService bookService;
 
@@ -80,14 +72,15 @@ public class BookServiceTest {
         int page = 1;
         int size = 10;
         String keyword = "쓰다";
+        AuthUser authUser = new AuthUser(1L, "test@gmail.com", "test", Role.ADMIN);
         Page<Book> bookPage = mock(Page.class);
 
-        when(bookService.saveKeyword(keyword)).thenReturn(null);
+        when(bookService.saveKeyword(keyword, authUser)).thenReturn(null);
         when(bookRepository.findAll(any(Pageable.class))).thenReturn(bookPage);
-        when(bookPage.map(any())).thenReturn(mock(Page.class)); // BookResponseDto로 mapping될 때
+        when(bookPage.map(any())).thenReturn(mock(Page.class));
 
         // when
-        PagedResponse result = bookService.findAll(page, size, keyword);
+        PagedResponse result = bookService.findAll(page, size, keyword, authUser);
 
         // then
         verify(bookRepository).findAll(any(Pageable.class));
@@ -101,15 +94,16 @@ public class BookServiceTest {
         int page = 1;
         int size = 10;
         String keyword = "쓰다";
+        AuthUser authUser = new AuthUser(1L, "test@gmail.com", "test", Role.ADMIN); // 추가
         Page<Book> bookPage = mock(Page.class);
         BookKeyword bookKeyword = mock(BookKeyword.class);
 
-        when(bookService.saveKeyword(keyword)).thenReturn(bookKeyword);
+        when(bookService.saveKeyword(keyword, authUser)).thenReturn(bookKeyword);
         when(qBookRepository.searchAllFields(eq(keyword), any(Pageable.class))).thenReturn(bookPage);
-        when(bookPage.map(any())).thenReturn(mock(Page.class)); // BookResponseDto로 mapping될 때
+        when(bookPage.map(any())).thenReturn(mock(Page.class));
 
         // when
-        PagedResponse result = bookService.findAll(page, size, keyword);
+        PagedResponse result = bookService.findAll(page, size, keyword, authUser);
 
         // then
         verify(qBookRepository).searchAllFields(eq(keyword), any(Pageable.class));

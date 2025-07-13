@@ -1,5 +1,6 @@
 package com.example.book_api.domain.book.controller;
 
+import com.example.book_api.domain.auth.dto.AuthUser;
 import com.example.book_api.domain.book.dto.BookResponseDto;
 import com.example.book_api.domain.book.dto.BookRegistRequestDto;
 import com.example.book_api.domain.book.dto.BookTrendResponseDto;
@@ -13,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -29,8 +31,7 @@ public class BookController {
     @Logging(activityType = ActivityType.BOOK_CREATED)
     @PostMapping("/books")
     public ResponseEntity<ApiResponse<BookResponseDto>> regist(
-            @RequestBody @Valid BookRegistRequestDto resquestDto
-            ) {
+            @RequestBody @Valid BookRegistRequestDto resquestDto) {
 
         return ApiResponse.success(HttpStatus.OK, "책이 등록되었습니다.", bookService.regist(resquestDto));
     }
@@ -38,8 +39,9 @@ public class BookController {
     // 책 단건 조회
     @GetMapping("/books/{id}")
     public ResponseEntity<ApiResponse<BookResponseDto>> find(
-            @PathVariable Long id) {
-        return ApiResponse.success(HttpStatus.OK,"성공적으로 조회되었습니다.", bookService.find(id));
+            @PathVariable Long id,
+            @AuthenticationPrincipal AuthUser authUser) {
+        return ApiResponse.success(HttpStatus.OK,"성공적으로 조회되었습니다.", bookService.find(id, authUser));
     }
 
     // 책 전체 조회
@@ -47,10 +49,11 @@ public class BookController {
     public ResponseEntity<ApiResponse<PagedResponse<BookResponseDto>>> findAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String keyword) {
+            @RequestParam(required = false) String keyword,
+            @AuthenticationPrincipal AuthUser authUser) {
 
         return ApiResponse.success(
-                HttpStatus.OK, "성공적으로 조회되었습니다.", bookService.findAll(page, size, keyword)
+                HttpStatus.OK, "성공적으로 조회되었습니다.", bookService.findAll(page, size, keyword, authUser)
         );
     }
 
