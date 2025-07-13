@@ -1,5 +1,6 @@
 package com.example.book_api.domain.book.service;
 
+import com.example.book_api.domain.auth.dto.AuthUser;
 import com.example.book_api.domain.book.dto.BookResponseDto;
 import com.example.book_api.domain.book.dto.BookRegistRequestDto;
 import com.example.book_api.domain.book.dto.BookTrendResponseDto;
@@ -12,8 +13,12 @@ import com.example.book_api.domain.book.exception.NotFoundException;
 import com.example.book_api.domain.book.repository.BookRepository;
 import com.example.book_api.domain.book.repository.QBookRepository;
 import com.example.book_api.domain.book.validation.BookValidator;
+import com.example.book_api.domain.user.entity.User;
+import com.example.book_api.domain.user.service.UserService;
 import com.example.book_api.global.dto.PagedResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,32 +36,39 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final UserService userService;
     private final BookViewService bookViewService;
     private final BookKeywordService bookKeywordService;
     private final QBookRepository qBookRepository;
     private final BookValidator bookValidator;
 
     // 책 등록
-    public BookResponseDto regist(BookRegistRequestDto resquestDto) {
+    public BookResponseDto regist(BookRegistRequestDto resquestDto, AuthUser authUser) {
         Book newBook = resquestDto.toEntity();
+        Long userId = authUser.getId();
+        User user = userService.findById(userId);
+        newBook.setUser(user);
         Book regist = bookRepository.save(newBook);
         return new BookResponseDto(regist);
     }
 
     // 책 단건 조회
     @Transactional
-    public BookResponseDto find(Long id) {
+    public BookResponseDto find(Long id, AuthUser authUser) {
         Book book = getBookById(id);
-        bookViewService.viewCount(book, 1L); // 토큰 들어오면 1L 바꾸기
+        bookViewService.viewCount(book, authUser.getId()); // 토큰 들어오면 1L 바꾸기
         return new BookResponseDto(book);
     }
 
     // 책 전체 조회 page, size 방식
-    public PagedResponse<BookResponseDto> findAll(int page, int size, String keyword) {
+    @Transactional
+    public PagedResponse<BookResponseDto> findAll(
+            int page, int size, String keyword, AuthUser authUser
+            ) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "id");
         Page<Book> books;
 
-        BookKeyword bookKeyword = saveKeyword(keyword);
+        BookKeyword bookKeyword = saveKeyword(keyword, authUser);
         if(bookKeyword == null) {
             books = bookRepository.findAll(pageable);
         } else {
@@ -66,12 +78,12 @@ public class BookService {
         return PagedResponse.toPagedResponse(books.map(BookResponseDto::new));
     }
 
-    public BookKeyword saveKeyword(String keyword) {
+    public BookKeyword saveKeyword(String keyword, AuthUser authUser) {
         if (keyword == null || keyword.trim().isEmpty()) {
             return null;
         }
 
-        return bookKeywordService.save(keyword, 1L); // TODO: User Token 값으로 변경 필요
+        return bookKeywordService.save(keyword, authUser.getId());
     }
 
     public boolean isPopularKeyword(String keyword) {
@@ -90,6 +102,10 @@ public class BookService {
 
 
     // 책 수정
+    @Caching(evict = {
+            @CacheEvict(value = "bookTop", allEntries = true),
+            @CacheEvict(value = "books", allEntries = true),
+    })
     public BookResponseDto update(Long id, BookUpdateRequestDto requestDto) {
         Book findBook = getBookById(id);
 
@@ -98,10 +114,11 @@ public class BookService {
     }
 
     // 책 삭제
+    @Transactional
     public LocalDateTime softDel(Long id) {
         Book findBook = getBookById(id);
         findBook.delete();
-        return new Book().getDeletedAt();
+        return findBook.getDeletedAt();
     }
 
 

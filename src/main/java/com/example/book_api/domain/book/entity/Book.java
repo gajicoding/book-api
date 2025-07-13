@@ -7,11 +7,15 @@ import com.example.book_api.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 import java.time.Year;
 
 @Entity
 @Getter
+@Setter
+@Where(clause = "deleted_at IS NULL")
 @Table(name = "books", indexes = {
         @Index(name = "idx_users_birth", columnList = "birth")
 })

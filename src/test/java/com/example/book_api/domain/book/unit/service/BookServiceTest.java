@@ -8,7 +8,6 @@ import com.example.book_api.domain.book.repository.BookRepository;
 import com.example.book_api.domain.book.repository.QBookRepository;
 import com.example.book_api.domain.book.service.BookService;
 import com.example.book_api.domain.book.validation.BookValidator;
-import com.example.book_api.domain.user.entity.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
