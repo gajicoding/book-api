@@ -7,7 +7,7 @@ import com.example.book_api.domain.user.enums.Role;
 import com.example.book_api.domain.user.exception.NotFoundUserException;
 import com.example.book_api.domain.user.exception.UserException;
 import com.example.book_api.domain.user.repository.UserRepository;
-import com.example.book_api.global.config.PasswordEncoder;
+import com.example.book_api.global.util.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

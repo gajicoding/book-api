@@ -1,4 +1,4 @@
-package com.example.book_api.global.config;
+package com.example.book_api.global.util;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;

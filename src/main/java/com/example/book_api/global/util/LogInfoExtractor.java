@@ -2,7 +2,7 @@ package com.example.book_api.global.util;
 
 import com.example.book_api.domain.log.enums.RequestMethod;
 import com.example.book_api.domain.log.enums.TargetType;
-import com.example.book_api.global.config.JwtUtil;
+import com.example.book_api.global.util.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
