@@ -124,7 +124,7 @@ public class BookService {
 
     // 책 전체 top 10
     public List<BookResponseDto> getTopBooks() {
-        return qBookRepository.findTop10Books()
+        return bookRepository.findTop10Books()
                 .stream()
                 .map(BookResponseDto::new)
                 .toList();

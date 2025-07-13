@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @SpringBootTest
 public class BookBulkInsertTest {
@@ -18,11 +19,11 @@ public class BookBulkInsertTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Disabled   // 삽입 필요할 때 제거
+    @Disabled // 필요 시 주석 해제
     @Test
     @Transactional
     @Rollback(false)
-    public void insertBulkBooks() {
+    public void insertBulkBooksTest() {
         int batchSize = 1_000;
         List<Object[]> params = new ArrayList<>();
 
@@ -50,6 +51,41 @@ public class BookBulkInsertTest {
         if (!params.isEmpty()) {
             jdbcTemplate.batchUpdate(
                     "INSERT INTO books (title, author, publisher, publication_year, isbn, category, user_id, created_at, modified_at) VALUES (?, ?, ?, ?, ?, ?, 1, NOW(), NOW())",
+                    params
+            );
+            params.clear();
+        }
+    }
+
+    @Disabled // 필요 시 주석 해제
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void insertBulkBookViewsTest() {
+        int batchSize = 1_000;
+        List<Object[]> params = new ArrayList<>();
+
+        Random random = new Random();
+
+        for (int i = 0; i < 10_000_000; i++) {
+            int randomBookId = random.nextInt(1_000_000) + 1;
+
+            params.add(new Object[]{
+                    randomBookId
+            });
+
+            if (params.size() == batchSize) {
+                jdbcTemplate.batchUpdate(
+                        "INSERT INTO book_views (book_id, user_id, created_at) VALUES (?, 1, NOW())",
+                        params
+                );
+                params.clear();
+            }
+        }
+
+        if (!params.isEmpty()) {
+            jdbcTemplate.batchUpdate(
+                    "INSERT INTO book_views (book_id, user_id, created_at) VALUES (?, 1, NOW())",
                     params
             );
             params.clear();

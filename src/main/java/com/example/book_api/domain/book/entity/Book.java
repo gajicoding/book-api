@@ -16,7 +16,9 @@ import java.time.Year;
 @Getter
 @Setter
 @Where(clause = "deleted_at IS NULL")
-@Table(name = "books")
+@Table(name = "books", indexes = {
+        @Index(name = "idx_users_birth", columnList = "birth")
+})
 @NoArgsConstructor
 public class Book extends BaseEntity {
 
