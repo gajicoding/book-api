@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -81,6 +83,10 @@ public class JwtFilter extends OncePerRequestFilter {
             response.sendError(ServletResponseError.EXPIRED_JWT_TOKEN.getHttpStatus(), ServletResponseError.EXPIRED_JWT_TOKEN.getMessage());
         } catch (UnsupportedJwtException e) {
             response.sendError(ServletResponseError.UNSUPPORTED_JWT.getHttpStatus(), ServletResponseError.UNSUPPORTED_JWT.getMessage());
+        } catch (RedisConnectionFailureException e) {
+            response.sendError(ServletResponseError.REDIS_CONNECTION_FAILED.getHttpStatus(), ServletResponseError.REDIS_CONNECTION_FAILED.getMessage());
+        } catch (DataAccessException e) {
+            response.sendError(ServletResponseError.DATA_ACCESS_FAILED.getHttpStatus(), ServletResponseError.DATA_ACCESS_FAILED.getMessage());
         } catch (Exception e) {
             response.sendError(ServletResponseError.INTERNAL_SERVER_ERROR.getHttpStatus(), ServletResponseError.INTERNAL_SERVER_ERROR.getMessage());
         }
