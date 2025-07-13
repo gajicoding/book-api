@@ -12,7 +12,9 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "users")
+@Table(name = "users", indexes = {
+        @Index(name = "idx_users_birth", columnList = "birth")
+})
 public class User extends BaseEntity {
 
     @Id
