@@ -114,10 +114,11 @@ public class BookService {
     }
 
     // 책 삭제
+    @Transactional
     public LocalDateTime softDel(Long id) {
         Book findBook = getBookById(id);
         findBook.delete();
-        return new Book().getDeletedAt();
+        return findBook.getDeletedAt();
     }
 
 

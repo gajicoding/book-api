@@ -8,12 +8,14 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 import java.time.Year;
 
 @Entity
 @Getter
 @Setter
+@Where(clause = "deleted_at IS NULL")
 @Table(name = "books")
 @NoArgsConstructor
 public class Book extends BaseEntity {
