@@ -1,5 +1,6 @@
 package com.example.book_api.domain.book.controller;
 
+import com.example.book_api.domain.auth.dto.AuthUser;
 import com.example.book_api.domain.book.dto.BookResponseDto;
 import com.example.book_api.domain.book.service.BookService;
 import com.example.book_api.domain.book.service.CachedBookService;
@@ -8,6 +9,7 @@ import com.example.book_api.global.dto.PagedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,14 +57,15 @@ public class BookControllerV2 {
     public ResponseEntity<ApiResponse<PagedResponse<BookResponseDto>>> findAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String keyword) {
+            @RequestParam(required = false) String keyword,
+            @AuthenticationPrincipal AuthUser authUser) {
 
         PagedResponse<BookResponseDto> result;
 
         if(bookService.isPopularKeyword(keyword)) {
-            result = cachedBookService.findAllCached(page, size, keyword);
+            result = cachedBookService.findAllCached(page, size, keyword, authUser);
         } else {
-            result = bookService.findAll(page, size, keyword);
+            result = bookService.findAll(page, size, keyword, authUser);
         }
 
         return ApiResponse.success(

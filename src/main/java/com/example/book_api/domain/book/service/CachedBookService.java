@@ -1,5 +1,6 @@
 package com.example.book_api.domain.book.service;
 
+import com.example.book_api.domain.auth.dto.AuthUser;
 import com.example.book_api.domain.book.dto.BookResponseDto;
 import com.example.book_api.global.dto.PagedResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -45,10 +46,10 @@ public class CachedBookService {
 //    }
 
     // 역 직렬화 문제로 수동 캐싱
-    public PagedResponse<BookResponseDto> findAllCached(int page, int size, String keyword) {
+    public PagedResponse<BookResponseDto> findAllCached(int page, int size, String keyword, AuthUser authUser) {
 
         // key 조회
-        String key = "bookTop::" + (keyword != null ? keyword : "") + "." + page + "." + size;
+        String key = "books::" + (keyword != null ? keyword : "") + "." + page + "." + size;
         Object cached = redisTemplate.opsForValue().get(key);
         PagedResponse<BookResponseDto> cachedResponse = objectMapper.convertValue(
                 cached,
@@ -58,12 +59,12 @@ public class CachedBookService {
         // 저장된 캐시가 있으면, 캐시 값 출력
         if (cachedResponse != null) {
             // 검색어 저장
-            bookService.saveKeyword(keyword);
+            bookService.saveKeyword(keyword, authUser);
             return cachedResponse;
         }
 
         // 저장된 캐시가 없으면, DB 조회 + 캐시 생성
-        PagedResponse<BookResponseDto> result = bookService.findAll(page, size, keyword);
+        PagedResponse<BookResponseDto> result = bookService.findAll(page, size, keyword, authUser);
         redisTemplate.opsForValue().set(key, result, 30, TimeUnit.MINUTES);
 
         return result;
