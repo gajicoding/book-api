@@ -26,4 +26,7 @@ public class SignUpRequestDto {
     @NotNull
     private LocalDate birth;
 
+    @NotNull
+    private String role;
+
 }

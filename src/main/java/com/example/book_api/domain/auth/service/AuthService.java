@@ -6,6 +6,7 @@ import com.example.book_api.domain.auth.dto.SignUpRequestDto;
 import com.example.book_api.domain.auth.dto.SignUpResponseDto;
 import com.example.book_api.domain.auth.exception.AuthException;
 import com.example.book_api.domain.user.entity.User;
+import com.example.book_api.domain.user.enums.Role;
 import com.example.book_api.domain.user.service.UserService;
 import com.example.book_api.global.util.PasswordEncoder;
 import com.example.book_api.global.util.jwt.JwtUtil;
@@ -31,12 +32,13 @@ public class AuthService {
                 signUpRequestDto.getEmail(),
                 encodedPassword,
                 signUpRequestDto.getName(),
-                signUpRequestDto.getBirth()
+                signUpRequestDto.getBirth(),
+                Role.of(signUpRequestDto.getRole())
         );
 
         User savedUser = userService.saveUser(newUser);
 
-        return new SignUpResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getName(), savedUser.getBirth());
+        return new SignUpResponseDto(savedUser);
     }
 
     @Transactional
@@ -47,7 +49,7 @@ public class AuthService {
             throw new AuthException("잘못된 비밀번호입니다.");
         }
 
-        return new SignInResponseDto(user.getId(), user.getEmail(), user.getName(), user.getBirth(), user.getRole());
+        return new SignInResponseDto(user);
     }
 
 
