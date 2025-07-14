@@ -1,6 +1,5 @@
 package com.example.book_api.domain.comment.controller;
 
-import com.example.book_api.domain.auth.annotation.Auth;
 import com.example.book_api.domain.auth.dto.AuthUser;
 import com.example.book_api.domain.comment.dto.CommentRequestDto;
 import com.example.book_api.domain.comment.dto.CommentResponseDto;
@@ -13,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +29,7 @@ public class CommentController {
     public ResponseEntity<ApiResponse<CommentResponseDto>> create(
             @PathVariable Long bookId,
             @RequestBody @Validated CommentRequestDto request,
-            @Auth AuthUser authUser
+            @AuthenticationPrincipal AuthUser authUser
             ) {
         CommentResponseDto response = commentService.create(authUser.getId(), bookId, request);
         return ApiResponse.success(HttpStatus.CREATED, "댓글이 생성되었습니다.", response);
@@ -55,7 +55,7 @@ public class CommentController {
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @Auth AuthUser authUser
+            @AuthenticationPrincipal AuthUser authUser
     ) {
         // 페이징
         Page<CommentResponseDto> paged = commentService.getMyCommentWithPaging(authUser.getId(), userId, page, size);
@@ -71,7 +71,7 @@ public class CommentController {
     public ResponseEntity<ApiResponse<CommentResponseDto>> update(
             @PathVariable Long id,
             @RequestBody CommentRequestDto request,
-            @Auth AuthUser authUser
+            @AuthenticationPrincipal AuthUser authUser
     ) {
         CommentResponseDto response = commentService.update(authUser.getId(), id, request);
 
@@ -83,7 +83,7 @@ public class CommentController {
     @DeleteMapping("/comments/{id}")
     public ResponseEntity<ApiResponse<LocalDateTime>> delete(
             @PathVariable Long id,
-            @Auth AuthUser authUser
+            @AuthenticationPrincipal AuthUser authUser
     ) {
         LocalDateTime deletedAt = commentService.delete(authUser.getId(), id);
         return ApiResponse.success(HttpStatus.OK, "댓글이 삭제되었습니다.", deletedAt);
