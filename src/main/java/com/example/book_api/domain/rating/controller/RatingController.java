@@ -6,13 +6,13 @@ import com.example.book_api.domain.rating.dto.response.MyRatingResponse;
 import com.example.book_api.domain.rating.dto.response.RatingDistributionResponse;
 import com.example.book_api.domain.rating.dto.response.TopRatedBookResponse;
 import com.example.book_api.domain.rating.service.RatingService;
-import com.example.book_api.domain.auth.annotation.Auth;
 import com.example.book_api.domain.auth.dto.AuthUser;
 import com.example.book_api.global.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class RatingController {
     @PostMapping("/books/{bookId}/ratings")
     public ResponseEntity<ApiResponse<Object>> createRating(@PathVariable Long bookId,
                                                             @Valid @RequestBody RatingRequestDto request,
-                                                            @Auth AuthUser authUser) {
+                                                            @AuthenticationPrincipal AuthUser authUser) {
         ratingService.createRating(bookId, request, authUser.getId());
         return ApiResponse.success(HttpStatus.CREATED, "평점 등록이 완료되었습니다.", null);
     }
@@ -35,14 +35,14 @@ public class RatingController {
     @PatchMapping("/books/{bookId}/ratings")
     public ResponseEntity<ApiResponse<Object>> updateRating(@PathVariable Long bookId,
                              @Valid @RequestBody RatingRequestDto request,
-                             @Auth AuthUser authUser) {
+                             @AuthenticationPrincipal AuthUser authUser) {
         ratingService.updateRating(bookId, request, authUser.getId());
         return ApiResponse.success(HttpStatus.OK, "평점 수정이 완료되었습니다.", null);
     }
 
     @DeleteMapping("/books/{bookId}/ratings")
     public ResponseEntity<ApiResponse<Object>> deleteRating(@PathVariable Long bookId,
-                             @Auth AuthUser authUser) {
+                             @AuthenticationPrincipal AuthUser authUser) {
         ratingService.deleteRating(bookId, authUser.getId());
         return ApiResponse.success(HttpStatus.OK, "평점 삭제가 완료되었습니다.", null);
     }
@@ -50,7 +50,7 @@ public class RatingController {
     //내가 남긴 평점 조회
     @GetMapping("/books/{bookId}/ratings/me")
     public ResponseEntity<ApiResponse<MyRatingResponse>> getMyRating(@PathVariable Long bookId,
-                                        @Auth AuthUser authUser) {
+                                        @AuthenticationPrincipal AuthUser authUser) {
         MyRatingResponse response = ratingService.getMyRating(bookId, authUser.getId());
         return ApiResponse.success(HttpStatus.OK, "내 평점 조회 성공", response);
     }

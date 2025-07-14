@@ -1,6 +1,5 @@
 package com.example.book_api.domain.user.controller;
 
-import com.example.book_api.domain.auth.annotation.Auth;
 import com.example.book_api.domain.auth.dto.AuthUser;
 import com.example.book_api.domain.log.enums.ActivityType;
 import com.example.book_api.domain.user.dto.*;
@@ -10,6 +9,7 @@ import com.example.book_api.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -38,7 +38,7 @@ public class UserController {
     @Logging(activityType = ActivityType.USER_PASSWORD_UPDATED)
     @PatchMapping("/users/password")
     public ResponseEntity<ApiResponse<ChangePasswordResponseDto>> changePassword(
-            @Auth AuthUser authUser,
+            @AuthenticationPrincipal AuthUser authUser,
             @RequestBody ChangePasswordRequestDto changePasswordRequestDto
     ) {
         ChangePasswordResponseDto changePasswordResponseDto = userService.changePassword(authUser, changePasswordRequestDto);
@@ -48,7 +48,7 @@ public class UserController {
     @Logging(activityType = ActivityType.USER_DELETED)
     @DeleteMapping("/users/withdraw")
     public ResponseEntity<ApiResponse<Object>> deleteUser(
-            @Auth AuthUser authUser,
+            @AuthenticationPrincipal AuthUser authUser,
             @RequestBody DeleteRequestDto deleteRequestDto
     ) {
         userService.deleteUser(authUser,deleteRequestDto);
